@@ -1,0 +1,60 @@
+// Swap two integers
+PROCEDURE swap(INTEGER p1, INTEGER p2)
+    INTEGER temp;
+    temp = p1;
+    p1 = p2;
+    p2 = temp;
+END-PROCEDURE;
+
+INTEGER partition(INTEGER arr[], INTEGER low, INTEGER high)
+    // choose the pivot
+    INTEGER pivot = arr[high];
+
+    // Index of smaller element and Indicate
+    // the right position of pivot found so far
+    INTEGER i = low - 1;
+
+    FOR (INTEGER j = low; j <= high; j++)
+        // If current element is smaller than the pivot
+        IF (arr[j] < pivot)
+            // Increment index of smaller element
+            i++;
+            swap(arr[i], arr[j]);
+        END-IF;
+    END-FOR;
+
+    swap(arr[i + 1], arr[high]);
+    RETURN i + 1;
+END-FUNCTION;
+
+// The Quicksort function Implement
+PROCEDURE quickSort(INTEGER arr[], INTEGER low, INTEGER high)
+    // when low is less than high
+    IF (low < high)
+        // pi is the partition return index of pivot
+        INTEGER pi = partition(arr, low, high);
+
+        // Recursion Call
+        // smaller element than pivot goes left and
+        // higher element goes right
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    END-IF;
+END-PROCEDURE;
+
+INTEGER main()
+    INTEGER arr[] = { 10, 7, 8, 9, 1, 5 };
+    INTEGER n = sizeof(arr) / sizeof(arr[0]);
+  
+    // Function call
+    quickSort(arr, 0, n - 1);
+  
+    // Print the sorted array
+    printf("Sorted Array\n");
+    FOR (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    END-FOR;
+    RETURN 0;
+END-FUNCTION;
+
+// This Code is Contributed By Diwakar Jha
