@@ -29,6 +29,7 @@
 
 "SWITCH"                                                     {printf("SWITCH\n");}
 "CASE"                                                       {printf("CASE\n");}
+"OTHER"                                                      {printf("OTHER\n");}
 
 "WHILE"                                                      {printf("WHILE\n");}
 "END-WHILE"                                                  {printf("END-WHILE\n");}
