@@ -65,8 +65,8 @@
 ")"                                                          {printf("END-PARENTESES\n");}
 "["                                                          {printf("BEGIN-SQUARE-BRACKET\n");}
 "]"                                                          {printf("END-SQUARE-BRACKET\n");}
-"{"                                                          {printf("BEGIN-CURLY-BRACKET\n")}
-"}"                                                          {printf("END-CURLY-BRACKET\n")}
+"{"                                                          {printf("BEGIN-CURLY-BRACKET\n");}
+"}"                                                          {printf("END-CURLY-BRACKET\n");}
 ","                                                          {printf("COMMA\n");}
 ":"                                                          {printf("COLON\n");}
 "="                                                          {printf("ASSIGN\n");}
