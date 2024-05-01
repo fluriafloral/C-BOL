@@ -10,4 +10,4 @@ lex lexer.l
 
 gcc lex.yy.c
 
-./a.out (ler da entrada padrão) ou ./a.out < fileName.txt (ler arquivo de testes)
+./a.out (ler da entrada padrão) ou ./a.out < examples/fileName.cbol (ler arquivo de testes)
