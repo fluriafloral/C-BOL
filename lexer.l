@@ -61,10 +61,14 @@
 
 "=="|"!="|"<"|">"|"<="|">="                                  {printf("RELATIONAL(%s)\n", yytext);}
 
-"("                                                          {printf("BEGIN_PARENTESES\n");}
+"("                                                          {printf("BEGIN-PARENTESES\n");}
+")"                                                          {printf("END-PARENTESES\n");}
+"["                                                          {printf("BEGIN-SQUARE-BRACKET\n");}
+"]"                                                          {printf("END-SQUARE-BRACKET\n");}
+"{"                                                          {printf("BEGIN-CURLY-BRACKET\n")}
+"}"                                                          {printf("END-CURLY-BRACKET\n")}
 ","                                                          {printf("COMMA\n");}
 ":"                                                          {printf("COLON\n");}
-")"                                                          {printf("END_PARENTESES\n");}
 "="                                                          {printf("ASSIGN\n");}
 
 ";"                                                          {printf("SEMICOLON\n");}
