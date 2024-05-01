@@ -52,6 +52,12 @@
 "BREAK"                                                      {printf("BREAK\n");}
 "CONTINUE"                                                   {printf("CONTINUE\n");}
 
+"TRY"                                                        {printf("TRY\n");}
+"END-TRY"                                                    {printf("END-TRY\n");}
+"CATCH"                                                      {printf("CATCH\n");}
+"FINALLY"                                                    {printf("FINALLY\n");}
+"EXPECT"                                                     {printf("EXPECT\n");}
+
 "NOT"                                                        {printf("NOT\n");}
 "AND"                                                        {printf("AND\n");}
 "OR"                                                         {printf("OR\n");}
