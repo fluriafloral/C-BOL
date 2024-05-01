@@ -19,6 +19,8 @@
 
 "LARGE"                                                      {printf("LARGE\n");}
 "DEFINE"                                                     {printf("DEFINE\n");}
+"ENUM"                                                       {printf("ENUM\n");}
+"END-ENUM"                                                   {printf("END-ENUM\n");}
 "STRUCT"                                                     {printf("STRUCT\n");}
 "END-STRUCT"                                                 {printf("END-STRUCT\n");}
 "CONST"                                                      {printf("CONST\n");}
