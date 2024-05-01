@@ -58,6 +58,8 @@
 "FINALLY"                                                    {printf("FINALLY\n");}
 "EXPECT"                                                     {printf("EXPECT\n");}
 
+"LAZY"                                                       {printf("LAZY\n");}
+
 "NOT"                                                        {printf("NOT\n");}
 "AND"                                                        {printf("AND\n");}
 "OR"                                                         {printf("OR\n");}
