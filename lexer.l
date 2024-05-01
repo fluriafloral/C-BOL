@@ -44,7 +44,7 @@
 
 "RETURN"                                                     {printf("RETURN\n");}
 "BREAK"                                                      {printf("BREAK\n");}
-"END"                                                        {printf("END\n");}
+"CONTINUE"                                                   {printf("CONTINUE\n");}
 
 "NOT"                                                        {printf("NOT\n");}
 "AND"                                                        {printf("AND\n");}
