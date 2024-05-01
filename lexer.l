@@ -20,6 +20,7 @@
 "LARGE"                                                      {printf("LARGE\n");}
 "DEFINE"                                                     {printf("DEFINE\n");}
 "STRUCT"                                                     {printf("STRUCT\n");}
+"END-STRUCT"                                                 {printf("END-STRUCT\n");}
 "CONST"                                                      {printf("CONST\n");}
 
 "IF"                                                         {printf("IF\n");}
