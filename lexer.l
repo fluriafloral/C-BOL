@@ -55,6 +55,7 @@
 "TRY"                                                        {printf("TRY\n");}
 "END-TRY"                                                    {printf("END-TRY\n");}
 "CATCH"                                                      {printf("CATCH\n");}
+"THROW"                                                      {printf("THROW\n");}
 "FINALLY"                                                    {printf("FINALLY\n");}
 "EXPECT"                                                     {printf("EXPECT\n");}
 
