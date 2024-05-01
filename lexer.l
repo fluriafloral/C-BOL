@@ -12,7 +12,7 @@
 ([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {printf("REAL(%s)\n", yytext);}
 
 "()"                                                         {printf("UNIT\n");}
-'.?'                                                         {printf("CHARACTER(%s)\n", yytext);}
+'.?'|'\\.?'                                                 {printf("CHARACTER(%s)\n", yytext);}
 \".*\"                                                       {printf("TEXT(%s)\n", yytext);}
 
 "UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {printf("TYPE(%s)\n", yytext);}
