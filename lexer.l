@@ -46,6 +46,7 @@
 "BREAK"                                                      {printf("BREAK\n");}
 "END"                                                        {printf("END\n");}
 
+"NOT"                                                        {printf("NOT\n");}
 "AND"                                                        {printf("AND\n");}
 "OR"                                                         {printf("OR\n");}
 "XOR"                                                        {printf("XOR\n");}
@@ -55,13 +56,9 @@
 "%"                                                          {printf("REST_OF_DIVISION\n");}
 "+"                                                          {printf("SUM\n");}
 "-"                                                          {printf("SUBTRACTION\n");}
-"=="                                                         {printf("EQUALS\n");}
-"!="                                                         {printf("NOT_EQUALS\n");}
-"!"                                                          {printf("NOT\n");}
-"<"                                                          {printf("LESS_THAN\n");}
-">"                                                          {printf("GREATER_THAN\n");}
-"<="                                                         {printf("LESS_OR_EQUAL\n");}
-">="                                                         {printf("GREATER_OR_EQUAL\n");}
+
+"=="|"!="|"<"|">"|"<="|">="                                  {printf("RELATIONAL(%s)\n", yytext);}
+
 "("                                                          {printf("BEGIN_PARENTESES\n");}
 ","                                                          {printf("COMMA\n");}
 ":"                                                          {printf("COLON\n");}
