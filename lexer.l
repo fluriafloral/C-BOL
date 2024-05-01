@@ -52,6 +52,7 @@
 "OR"                                                         {printf("OR\n");}
 "XOR"                                                        {printf("XOR\n");}
 
+"^"                                                          {printf("POWER\n");}
 "*"                                                          {printf("MULTIPLICATION\n");}
 "/"                                                          {printf("DIVISION\n");}
 "%"                                                          {printf("REST_OF_DIVISION\n");}

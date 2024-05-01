@@ -47,6 +47,7 @@ NOT
 AND
 OR
 XOR
+10r ^ 3 
 *
 /
 %
