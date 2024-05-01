@@ -41,7 +41,8 @@ PROCEDURE
 END-PROCEDURE
 RETURN
 BREAK
-END
+CONTINUE
+NOT
 AND
 OR
 XOR
@@ -52,7 +53,6 @@ XOR
 -
 ==
 !=
-!
 <
 >
 <=
