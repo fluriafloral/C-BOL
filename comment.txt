@@ -1,0 +1,17 @@
+// this is a commentary
+//// 
+// 1 / 2
+//thisisalsoacommentary
+//1234567890
+///
+INTEGER x = 10; // INTEGER
+// INTEGER x = 10;
+/ HI /
+/*
+multi
+line
+comment
+// comment
+*/
+/* multi line but inline comment */
+/*multi line but inline comment*/

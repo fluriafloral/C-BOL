@@ -5,7 +5,8 @@
 %%
 
 [ \t\n]                                                      ;
-
+"//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {printf("COMMENT(%s)\n", yytext);}
+            
 [0-9]+                                                       {printf("INTEGER(%s)\n", yytext);}
 ([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {printf("DECIMAL(%s)\n", yytext);}
 ([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {printf("REAL(%s)\n", yytext);}
