@@ -43,6 +43,7 @@
 
 "PROCEDURE"                                                  {printf("PROCEDURE\n");}
 "END-PROCEDURE"                                              {printf("END-PROCEDURE\n");}
+"END-FUNCTION"                                               {printf("END-FUNCTION\n");}
 
 "RETURN"                                                     {printf("RETURN\n");}
 "BREAK"                                                      {printf("BREAK\n");}
