@@ -29,7 +29,7 @@
 "THEN"                                                       {printf("THEN\n");}
 "ELIF"                                                       {printf("ELIF\n");}
 "ELSE"                                                       {printf("ELSE\n");}
-"ENDIF"                                                      {printf("ENDIF\n");}
+"END-IF"                                                      {printf("END-IF\n");}
 
 "SWITCH"                                                     {printf("SWITCH\n");}
 "CASE"                                                       {printf("CASE\n");}
