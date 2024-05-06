@@ -1,105 +1,103 @@
 %{
   #include <stdio.h>  
+  #include <stdlib.h>
+  #include "y.tab.h"
+
+  extern int yyerror (char *msg);
 %}
 
 %%
 
 [ \t\n]                                                      ;
-"//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {printf("COMMENT(%s)\n", yytext);}
+"//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {yylval.sValue = strdup(yytext); return COMMENT;}
             
-[0-9]+                                                       {printf("INTEGER(%s)\n", yytext);}
-([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {printf("DECIMAL(%s)\n", yytext);}
-([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {printf("REAL(%s)\n", yytext);}
+[0-9]+                                                       {yylval.iValue = atoi(yytext); return INTEGER;}
+([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {yylval.dValue = atof(yytext); return DECIMAL;}
+([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {yylval.fValue = atof(yytext); return REAL;}
 
-"()"                                                         {printf("UNIT\n");}
-'.?'|'\\.?'                                                 {printf("CHARACTER(%s)\n", yytext);}
-\".*\"                                                       {printf("TEXT(%s)\n", yytext);}
+"()"                                                         {return UNIT;}
+'.?'|'\\.?'                                                  {yylval.cValue = yytext[0]; return CHARACTER;}
+\".*\"                                                       {yylval.sValue = yytext; return TEXT;}
 
-"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {printf("TYPE(%s)\n", yytext);}
+"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = yytext; return TYPE;}
 
-"LARGE"                                                      {printf("LARGE\n");}
-"DEFINE"                                                     {printf("DEFINE\n");}
-"ENUM"                                                       {printf("ENUM\n");}
-"END-ENUM"                                                   {printf("END-ENUM\n");}
-"STRUCT"                                                     {printf("STRUCT\n");}
-"END-STRUCT"                                                 {printf("END-STRUCT\n");}
-"CONST"                                                      {printf("CONST\n");}
+"LARGE"                                                      {return LARGE;}
+"DEFINE"                                                     {return DEFINE;}
+"ENUM"                                                       {return ENUM;}
+"END-ENUM"                                                   {return END_ENUM;}
+"STRUCT"                                                     {return STRUCT;}
+"END-STRUCT"                                                 {return END_STRUCT;}
+"CONST"                                                      {return CONST;}
 
-"IF"                                                         {printf("IF\n");}
-"THEN"                                                       {printf("THEN\n");}
-"ELIF"                                                       {printf("ELIF\n");}
-"ELSE"                                                       {printf("ELSE\n");}
-"END-IF"                                                      {printf("END-IF\n");}
+"IF"                                                         {return IF;}
+"THEN"                                                       {return THEN;}
+"ELIF"                                                       {return ELIF;}
+"ELSE"                                                       {return ELSE;}
+"END-IF"                                                      {return END_IF;}
 
-"SWITCH"                                                     {printf("SWITCH\n");}
-"CASE"                                                       {printf("CASE\n");}
-"THRU"                                                       {printf("THRU\n");}
-"OTHER"                                                      {printf("OTHER\n");}
+"SWITCH"                                                     {return SWITCH;}
+"CASE"                                                       {return CASE;}
+"THRU"                                                       {return THRU;}
+"OTHER"                                                      {return OTHER;}
 
-"WHILE"                                                      {printf("WHILE\n");}
-"END-WHILE"                                                  {printf("END-WHILE\n");}
+"WHILE"                                                      {return WHILE;}
+"END-WHILE"                                                  {return END_WHILE;}
 
-"FOR"                                                        {printf("FOR\n");}
-"END-FOR"                                                    {printf("END-FOR\n");}
+"FOR"                                                        {return FOR;}
+"END-FOR"                                                    {return END_FOR;}
 
-"DO"                                                         {printf("DO\n");}
-"END-DO"                                                     {printf("END-FOR\n");}
+"DO"                                                         {return DO;}
+"END-DO"                                                     {return END_DO;}
 
-"PROCEDURE"                                                  {printf("PROCEDURE\n");}
-"END-PROCEDURE"                                              {printf("END-PROCEDURE\n");}
-"END-FUNCTION"                                               {printf("END-FUNCTION\n");}
+"PROCEDURE"                                                  {return PROCEDURE;}
+"END-PROCEDURE"                                              {return END_PROCEDURE;}
+"END-FUNCTION"                                               {return END_FUNCTION;}
 
-"RETURN"                                                     {printf("RETURN\n");}
-"BREAK"                                                      {printf("BREAK\n");}
-"CONTINUE"                                                   {printf("CONTINUE\n");}
+"RETURN"                                                     {return RETURN;}
+"BREAK"                                                      {return BREAK;}
+"CONTINUE"                                                   {return CONTINUE;}
 
-"TRY"                                                        {printf("TRY\n");}
-"END-TRY"                                                    {printf("END-TRY\n");}
-"CATCH"                                                      {printf("CATCH\n");}
-"THROW"                                                      {printf("THROW\n");}
-"FINALLY"                                                    {printf("FINALLY\n");}
-"EXPECT"                                                     {printf("EXPECT\n");}
+"TRY"                                                        {return TRY;}
+"END-TRY"                                                    {return END_TRY;}
+"CATCH"                                                      {return CATCH;}
+"THROW"                                                      {return THROW;}
+"FINALLY"                                                    {return FINALLY;}
+"EXPECT"                                                     {return EXPECT;}
 
-"LAZY"                                                       {printf("LAZY\n");}
+"LAZY"                                                       {return LAZY;}
 
-"NOT"                                                        {printf("NOT\n");}
-"AND"                                                        {printf("AND\n");}
-"OR"                                                         {printf("OR\n");}
-"XOR"                                                        {printf("XOR\n");}
+"NOT"                                                        {return NOT;}
+"AND"                                                        {return AND;}
+"OR"                                                         {return OR;}
+"XOR"                                                        {return XOR;}
 
-"^"                                                          {printf("POWER\n");}
-"*"                                                          {printf("MULTIPLICATION\n");}
-"/"                                                          {printf("DIVISION\n");}
-"%"                                                          {printf("REST_OF_DIVISION\n");}
-"+"                                                          {printf("SUM\n");}
-"-"                                                          {printf("SUBTRACTION\n");}
+"^"                                                          {return POWER;}
+"*"                                                          {return MULTIPLICATION;}
+"/"                                                          {return DIVISION;}
+"%"                                                          {return REST_OF_DIVISION;}
+"+"                                                          {return SUM;}
+"-"                                                          {return SUBTRACTION;}
 
-"=="|"!="|"<"|">"|"<="|">="                                  {printf("RELATIONAL(%s)\n", yytext);}
+"=="|"!="|"<"|">"|"<="|">="                                  {yylval.sValue = yytext; return RELATIONAL;}
 
-"("                                                          {printf("BEGIN-PARENTESES\n");}
-")"                                                          {printf("END-PARENTESES\n");}
-"["                                                          {printf("BEGIN-SQUARE-BRACKET\n");}
-"]"                                                          {printf("END-SQUARE-BRACKET\n");}
-"{"                                                          {printf("BEGIN-CURLY-BRACKET\n");}
-"}"                                                          {printf("END-CURLY-BRACKET\n");}
-","                                                          {printf("COMMA\n");}
-":"                                                          {printf("COLON\n");}
-"="                                                          {printf("ASSIGN\n");}
+"("                                                          {return BEGIN_PARENTESES;}
+")"                                                          {return END_PARENTESES;}
+"["                                                          {return BEGIN_SQUARE_BRACKET;}
+"]"                                                          {return END_SQUARE_BRACKET;}
+"{"                                                          {return BEGIN_CURLY_BRACKET;}
+"}"                                                          {return END_CURLY_BRACKET;}
+","                                                          {return COMMA;}
+":"                                                          {return COLON;}
+"="                                                          {return ASSIGN;}
 
-";"                                                          {printf("SEMICOLON\n");}
+";"                                                          {return SEMICOLON;}
 
-[a-zA-Z][a-zA-Z0-9_]*                                        {printf("ID(%s)\n", yytext);}
+[a-zA-Z][a-zA-Z0-9_]*                                        {yylval.sValue = yytext; return ID;}
 
-.                                                            {printf("Invalid character.\n");}
+.                                                            {yyerror("Invalid character.");}
 
 %%
 
 #ifndef yywrap
    int yywrap (void) {return 1;}
 #endif
-
-int main(void)
-{
-  yylex();  
-  return 0;
-}
