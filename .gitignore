@@ -1,2 +1,6 @@
 lex.yy.c
 a.out
+y.gv
+y.output
+y.tab.c
+y.tab.h
