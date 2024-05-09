@@ -17,9 +17,9 @@
 
 "()"                                                         {return UNIT;}
 '.?'|'\\.?'                                                  {yylval.cValue = yytext[0]; return CHARACTER;}
-\".*\"                                                       {yylval.sValue = yytext; return TEXT;}
+\".*\"                                                       {yylval.sValue = strdup(yytext); return TEXT;}
 
-"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = yytext; return TYPE;}
+"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = strdup(yytext); return TYPE;}
 
 "LARGE"                                                      {return LARGE;}
 "DEFINE"                                                     {return DEFINE;}
@@ -92,7 +92,7 @@
 
 ";"                                                          {return SEMICOLON;}
 
-[a-zA-Z][a-zA-Z0-9_]*                                        {yylval.sValue = yytext; return ID;}
+[a-zA-Z][a-zA-Z0-9_]*                                        {yylval.sValue = strdup(yytext); return ID;}
 
 .                                                            {yyerror("Invalid character.");}
 
