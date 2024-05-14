@@ -9,10 +9,6 @@ extern char * yytext;
 %}
 
 %union {
-    int    iValue; 	/* integer value */
-    double dValue;  /* double value */
-    float  fValue;  /* float value */
-    char   cValue; 	/* char value */
     char * sValue;  /* string value */
 };
 
@@ -46,27 +42,11 @@ extern char * yytext;
 prog : stmlist {} 
 	 ;
 
-stm_id : ID | BEGIN_PARENTESES ID END_PARENTESES;
-
-switch_case_list : CASE stm_id COLON stmlist                     {}
-                 | CASE stm_id COLON stmlist BREAK               {}
-                 | CASE stm_id THRU stm_id COLON stmlist         {}
-                 | CASE stm_id THRU stm_id COLON stmlist BREAK   {}
-                 | CASE stm_id COLON switch_case_list            {}
-                 | CASE OTHER COLON stmlist                      {}
-                 | CASE OTHER COLON stmlist BREAK                {}
-                 ;
-
 stm : ID ASSIGN ID                                      {printf("%s = %s \n",$1, $3);}
-    | WHILE stm_id stm END_WHILE				        {}
-	| IF stm_id THEN stm END_IF					        {}
-	| IF stm_id THEN stm ELSE stm END_IF                {}
-	| IF stm_id THEN stm ELIF stm_id THEN stm END_IF    {}
-	| SWITCH stm_id switch_case_list END_SWITCH         {}
     ;
 
-stmlist : stm								{}
-		| stmlist SEMICOLON stm				{}
+stmlist : stm SEMICOLON						{}
+		| stm SEMICOLON stmlist				{}
 	    ;
 %%
 

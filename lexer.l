@@ -11,12 +11,12 @@
 [ \t\n]                                                      ;
 "//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {yylval.sValue = strdup(yytext); return COMMENT;}
             
-[0-9]+                                                       {yylval.iValue = atoi(yytext); return INTEGER;}
-([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {yylval.dValue = atof(yytext); return DECIMAL;}
-([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {yylval.fValue = atof(yytext); return REAL;}
+[0-9]+                                                       {yylval.sValue = strdup(yytext); return INTEGER;}
+([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {yylval.sValue = strdup(yytext); return DECIMAL;}
+([0-9]*"."[0-9]+"r"|[0-9]+"r"|[0-9]+"."[0-9]+"r")            {yylval.sValue = strdup(yytext); return REAL;}
 
 "()"                                                         {return UNIT;}
-'.?'|'\\.?'                                                  {yylval.cValue = yytext[0]; return CHARACTER;}
+'.?'|'\\.?'                                                  {yylval.sValue = strdup(yytext); return CHARACTER;}
 \".*\"                                                       {yylval.sValue = strdup(yytext); return TEXT;}
 
 "UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = strdup(yytext); return TYPE;}
@@ -78,7 +78,7 @@
 "+"                                                          {return SUM;}
 "-"                                                          {return SUBTRACTION;}
 
-"=="|"!="|"<"|">"|"<="|">="                                  {yylval.sValue = yytext; return RELATIONAL;}
+"=="|"!="|"<"|">"|"<="|">="                                  {yylval.sValue = strdup(yytext); return RELATIONAL;}
 
 "("                                                          {return BEGIN_PARENTESES;}
 ")"                                                          {return END_PARENTESES;}
