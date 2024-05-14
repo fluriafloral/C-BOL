@@ -42,11 +42,56 @@ extern char * yytext;
 prog : stmlist {} 
 	 ;
 
-stm : ID ASSIGN ID                                      {printf("%s = %s \n",$1, $3);}
+
+/// TODO: NOT
+relational_operator : RELATIONAL | AND | OR | XOR;
+
+relational : ID relational_operator ID {}
+           ;
+
+/// CONDITIONALS
+
+if_exp : BEGIN_PARENTESES relational END_PARENTESES {};
+if_elifs : ELIF if_exp stmlist if_elifs {} | {};
+if_else : ELSE stmlist {} | {};
+
+if_stmts
+:
+IF if_exp
+    stmlist
+if_elifs
+if_else
+END_IF {printf("if\n");}
+;
+
+switch_case_optional :  stmlist {}
+                     | stmlist BREAK SEMICOLON {}
+                     | BREAK SEMICOLON {}
+                     | {};
+
+switch_case : CASE ID COLON switch_case_optional {}
+            | CASE ID COLON switch_case_optional switch_case {}
+            | CASE ID THRU ID COLON switch_case_optional {}
+            | CASE ID THRU ID COLON switch_case_optional switch_case {}
+            | CASE OTHER COLON stmlist {}
+            | CASE OTHER COLON stmlist BREAK SEMICOLON {}
+            ;
+        
+switch_stmts
+:
+SWITCH BEGIN_PARENTESES ID END_PARENTESES
+    switch_case
+END_SWITCH {printf("switch\n");};
+
+/// END-CONDITIONALS
+
+stm : ID ASSIGN ID SEMICOLON        {}
+    | if_stmts                      {}
+    | switch_stmts                  {}
     ;
 
-stmlist : stm SEMICOLON						{}
-		| stm SEMICOLON stmlist				{}
+stmlist : stm				        {}
+		| stm SEMICOLON stmlist	    {}
 	    ;
 %%
 
