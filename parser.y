@@ -13,10 +13,10 @@ extern char * yytext;
 };
 
 %token <sValue> COMMENT
-%token <iValue> INTEGER
-%token <dValue> DECIMAL
-%token <fValue> REAL
-%token <cValue> CHARACTER
+%token <sValue> INTEGER
+%token <sValue> DECIMAL
+%token <sValue> REAL
+%token <sValue> CHARACTER
 %token <sValue> TEXT
 %token <sValue> TYPE
 %token <sValue> RELATIONAL
