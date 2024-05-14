@@ -39,6 +39,7 @@
 "CASE"                                                       {return CASE;}
 "THRU"                                                       {return THRU;}
 "OTHER"                                                      {return OTHER;}
+"END-SWITCH"                                                 {return END_SWITCH;}
 
 "WHILE"                                                      {return WHILE;}
 "END-WHILE"                                                  {return END_WHILE;}
