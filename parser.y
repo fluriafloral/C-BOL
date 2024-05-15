@@ -31,8 +31,8 @@ extern char * yytext;
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY
 %token NOT AND OR XOR
-%token POWER MULTIPLICATION DIVISION REST_OF_DIVISION SUM SUBTRACTION
-%token BEGIN_PARENTESES END_PARENTESES BEGIN_SQUARE_BRACKET END_SQUARE_BRACKET BEGIN_CURLY_BRACKET END_CURLY_BRACKET COMMA COLON ASSIGN SEMICOLON
+%token '^' '*' '/' '%' '+' '-'
+%token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
 
 %start prog
 
@@ -51,7 +51,7 @@ relational : ID relational_operator ID {}
 
 /// CONDITIONALS
 
-if_exp : BEGIN_PARENTESES relational END_PARENTESES {};
+if_exp : '(' relational ')' {};
 if_elifs : ELIF if_exp stmlist if_elifs {} | {};
 if_else : ELSE stmlist {} | {};
 
@@ -65,33 +65,33 @@ END_IF {printf("if\n");}
 ;
 
 switch_case_optional :  stmlist {}
-                     | stmlist BREAK SEMICOLON {}
-                     | BREAK SEMICOLON {}
+                     | stmlist BREAK ';' {}
+                     | BREAK ';' {}
                      | {};
 
-switch_case : CASE ID COLON switch_case_optional {}
-            | CASE ID COLON switch_case_optional switch_case {}
-            | CASE ID THRU ID COLON switch_case_optional {}
-            | CASE ID THRU ID COLON switch_case_optional switch_case {}
-            | CASE OTHER COLON stmlist {}
-            | CASE OTHER COLON stmlist BREAK SEMICOLON {}
+switch_case : CASE ID ':' switch_case_optional {}
+            | CASE ID ':' switch_case_optional switch_case {}
+            | CASE ID THRU ID ':' switch_case_optional {}
+            | CASE ID THRU ID ':' switch_case_optional switch_case {}
+            | CASE OTHER ':' stmlist {}
+            | CASE OTHER ':' stmlist BREAK ';' {}
             ;
         
 switch_stmts
 :
-SWITCH BEGIN_PARENTESES ID END_PARENTESES
+SWITCH '(' ID ')'
     switch_case
 END_SWITCH {printf("switch\n");};
 
 /// END-CONDITIONALS
 
-stm : ID ASSIGN ID SEMICOLON        {}
+stm : ID '=' ID ';'        {}
     | if_stmts                      {}
     | switch_stmts                  {}
     ;
 
 stmlist : stm				        {}
-		| stm SEMICOLON stmlist	    {}
+		| stm ';' stmlist	    {}
 	    ;
 %%
 

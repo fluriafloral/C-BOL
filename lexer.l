@@ -72,26 +72,26 @@
 "OR"                                                         {return OR;}
 "XOR"                                                        {return XOR;}
 
-"^"                                                          {return POWER;}
-"*"                                                          {return MULTIPLICATION;}
-"/"                                                          {return DIVISION;}
-"%"                                                          {return REST_OF_DIVISION;}
-"+"                                                          {return SUM;}
-"-"                                                          {return SUBTRACTION;}
+"^"                                                          {return yytext[0];}
+"*"                                                          {return yytext[0];}
+"/"                                                          {return yytext[0];}
+"%"                                                          {return yytext[0];}
+"+"                                                          {return yytext[0];}
+"-"                                                          {return yytext[0];}
 
 "=="|"!="|"<"|">"|"<="|">="                                  {yylval.sValue = strdup(yytext); return RELATIONAL;}
 
-"("                                                          {return BEGIN_PARENTESES;}
-")"                                                          {return END_PARENTESES;}
-"["                                                          {return BEGIN_SQUARE_BRACKET;}
-"]"                                                          {return END_SQUARE_BRACKET;}
-"{"                                                          {return BEGIN_CURLY_BRACKET;}
-"}"                                                          {return END_CURLY_BRACKET;}
-","                                                          {return COMMA;}
-":"                                                          {return COLON;}
-"="                                                          {return ASSIGN;}
+"("                                                          {return yytext[0];}
+")"                                                          {return yytext[0];}
+"["                                                          {return yytext[0];}
+"]"                                                          {return yytext[0];}
+"{"                                                          {return yytext[0];}
+"}"                                                          {return yytext[0];}
+","                                                          {return yytext[0];}
+":"                                                          {return yytext[0];}
+"="                                                          {return yytext[0];}
 
-";"                                                          {return SEMICOLON;}
+";"                                                          {return yytext[0];}
 
 [a-zA-Z][a-zA-Z0-9_]*                                        {yylval.sValue = strdup(yytext); return ID;}
 
