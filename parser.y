@@ -85,13 +85,24 @@ END_SWITCH {printf("switch\n");};
 
 /// END-CONDITIONALS
 
+/// LOOPS
+
+while_stmts 
+: 
+WHILE if_exp
+    stmlist
+END_WHILE {printf("while\n");};
+
+/// END-LOOPS
+
 stm : ID '=' ID ';'        {}
     | if_stmts                      {}
     | switch_stmts                  {}
+    | while_stmts                   {}
     ;
 
 stmlist : stm				        {}
-		| stm ';' stmlist	    {}
+		| stm stmlist	            {}
 	    ;
 %%
 
