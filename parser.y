@@ -102,6 +102,11 @@ WHILE rel_block
     stmlist
 END_WHILE
 
+for_stm
+:
+FOR '(' assign ';' rel_exp ';' stm ')'
+    stmlist
+END_FOR
 /// END-LOOPS
 
 
@@ -140,6 +145,7 @@ stm : assign {}
     | if_stmts {}
     | switch_stmts {}
     | while_stmts {}
+    | for_stm {}
     | declar {}
     ;
 
