@@ -12,7 +12,6 @@ extern char * yytext;
     char * sValue;  /* string value */
 };
 
-%token <sValue> COMMENT
 %token <sValue> INTEGER
 %token <sValue> DECIMAL
 %token <sValue> REAL

@@ -9,7 +9,7 @@
 %%
 
 [ \t\n]                                                      ;
-"//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {yylval.sValue = strdup(yytext); return COMMENT;}
+"//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {}
             
 [0-9]+                                                       {yylval.sValue = strdup(yytext); return INTEGER;}
 ([0-9]*"."[0-9]+|[0-9]+"."[0-9]*)                            {yylval.sValue = strdup(yytext); return DECIMAL;}
