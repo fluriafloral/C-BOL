@@ -108,6 +108,18 @@ END_WHILE {printf("while\n");};
 
 
 
+/// DECLARATIONS
+declar
+    : TYPE ID ';'
+    | LARGE TYPE ID ';' /// TODO: Only large types 
+    | DEFINE TYPE ID '=' ID ';'
+    | CONST TYPE ID '=' ID ';'
+    ;
+/// END-DECLARATIONS
+
+
+
+
 
 /// STMS
 
@@ -115,6 +127,7 @@ stm : ID '=' ID ';'        {}
     | if_stmts                      {}
     | switch_stmts                  {}
     | while_stmts                   {}
+    | declar                        {}
     ;
 
 stmlist : stm				        {}
