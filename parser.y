@@ -118,6 +118,29 @@ THEN WHILE rel_block
 
 
 
+/// EXCEPTIONS
+expect_stm : EXPECT rel_block ELSE TEXT
+
+try_catches
+    : CATCH '(' TYPE ID ')' stmlist
+    | CATCH '(' TYPE ID ')' stmlist try_catches
+    ;
+
+try_finally_optional : | FINALLY stmlist
+
+try_stm
+:
+TRY
+    stmlist
+try_catches
+try_finally_optional
+END_TRY
+/// END-EXCEPTIONS
+
+
+
+
+
 /// DECLARATIONS
 declar
     : TYPE ID
@@ -154,6 +177,8 @@ stm : assign {}
     | for_stm {}
     | do_stm {}
     | declar {}
+    | expect_stm {}
+    | try_stm {}
     ;
 
 stmlist : stm ';'

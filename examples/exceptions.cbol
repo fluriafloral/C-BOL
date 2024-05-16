@@ -1,0 +1,19 @@
+// EXPECT
+
+EXPECT (x < 10) ELSE "Deu ruim!";
+
+// TRY-CATCH
+
+TRY
+    EXPECT (x < 10) ELSE "Deu ruim!";
+CATCH (TEXT e)
+    z = e;
+FINALLY
+    w = z;
+END-TRY;
+
+TRY
+    z = 5.3;
+CATCH (TEXT e)
+    z = e;
+END-TRY;
