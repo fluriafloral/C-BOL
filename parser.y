@@ -45,9 +45,17 @@ prog : stmlist
 /// RELATIONALS
 
 /// TODO: NOT
-rel_operator : RELATIONAL | AND | OR | XOR;
-rel_exp : exp rel_operator exp;
-rel_block : '(' rel_exp ')';
+rel_operator : RELATIONAL 
+             | AND 
+             | OR 
+             | XOR
+             ;
+
+rel_exp : exp rel_operator exp
+        ;
+
+rel_block : '(' rel_exp ')'
+          ;
 
 /// END-RELATIONALS
 
@@ -57,22 +65,22 @@ rel_block : '(' rel_exp ')';
 
 /// CONDITIONALS
 
-if_elifs : ELIF rel_block stmlist if_elifs |;
-if_else : ELSE stmlist |;
+if_elifs : ELIF rel_block stmlist if_elifs 
+         |
+         ;
 
-if_stmts
-:
-IF rel_block
-    stmlist
-if_elifs
-if_else
-END_IF
-;
+if_else : ELSE stmlist 
+        |
+        ;
+
+if_stmts : IF rel_block stmlist if_elifs if_else END_IF
+         ;
 
 switch_case_optional : stmlist
                      | stmlist BREAK ';'
                      | BREAK ';'
-                     |;
+                     |
+                     ;
 
 switch_case : CASE exp ':' switch_case_optional
             | CASE exp ':' switch_case_optional switch_case
@@ -82,11 +90,8 @@ switch_case : CASE exp ':' switch_case_optional
             | CASE OTHER ':' stmlist BREAK ';'
             ;
         
-switch_stmts
-:
-SWITCH '(' exp ')'
-    switch_case
-END_SWITCH
+switch_stmts : SWITCH '(' exp ')' switch_case END_SWITCH
+             ;
 
 /// END-CONDITIONALS
 
@@ -96,23 +101,15 @@ END_SWITCH
 
 /// LOOPS
 
-while_stmts 
-: 
-WHILE rel_block
-    stmlist
-END_WHILE
+while_stmts : WHILE rel_block stmlist END_WHILE
+            ;
 
-for_stm
-:
-FOR '(' assign ';' rel_exp ';' stm ')'
-    stmlist
-END_FOR
+for_stm : FOR '(' assign ';' rel_exp ';' stm ')' stmlist END_FOR
+        ;
 
-do_stm
-:
-DO
-    stmlist
-THEN WHILE rel_block
+do_stm : DO stmlist THEN WHILE rel_block
+       ;
+
 /// END-LOOPS
 
 
@@ -120,21 +117,19 @@ THEN WHILE rel_block
 
 /// EXCEPTIONS
 expect_stm : EXPECT rel_block ELSE TEXT
+           ;
 
-try_catches
-    : CATCH '(' TYPE ID ')' stmlist
-    | CATCH '(' TYPE ID ')' stmlist try_catches
-    ;
+try_catches : CATCH '(' TYPE ID ')' stmlist
+            | CATCH '(' TYPE ID ')' stmlist try_catches
+            ;
 
-try_finally_optional : | FINALLY stmlist
+try_finally_optional : FINALLY stmlist
+                     | 
+                     ;
 
-try_stm
-:
-TRY
-    stmlist
-try_catches
-try_finally_optional
-END_TRY
+try_stm : TRY stmlist try_catches try_finally_optional END_TRY
+        ;
+
 /// END-EXCEPTIONS
 
 
@@ -142,11 +137,11 @@ END_TRY
 
 
 /// DECLARATIONS
-declar
-    : TYPE ID
-    | LARGE TYPE ID /// TODO: Only large types 
-    | CONST TYPE ID '=' exp
-    ;
+declar : TYPE ID
+       | LARGE TYPE ID /// TODO: Only large types 
+       | CONST TYPE ID '=' exp
+       ;
+
 /// END-DECLARATIONS
 
 
@@ -154,22 +149,23 @@ declar
 
 
 /// EXPRESSIONS
-exp_value
-    : UNIT
-    | INTEGER
-    | REAL
-    | DECIMAL
-    | CHARACTER
-    | TEXT
-    ;
-exp
-    : exp_value
+exp_value : UNIT
+          | INTEGER
+          | REAL
+          | DECIMAL
+          | CHARACTER
+          | TEXT
+          ;
+
+exp : exp_value
     | ID
     ;
 /// END-EXPRESSIONS
 
 /// STMS
-assign : ID '=' exp;
+assign : ID '=' exp
+       ;
+       
 stm : assign {}
     | if_stmts {}
     | switch_stmts {}
