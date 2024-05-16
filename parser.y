@@ -24,7 +24,7 @@ extern char * yytext;
 %token LARGE DEFINE ENUM END_ENUM STRUCT END_STRUCT CONST
 %token IF THEN ELIF ELSE END_IF
 %token SWITCH CASE THRU OTHER END_SWITCH
-%token WHILE END_WHILE FOR END_FOR DO END_DO
+%token WHILE END_WHILE FOR END_FOR DO
 %token PROCEDURE END_PROCEDURE END_FUNCTION
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
@@ -107,6 +107,12 @@ for_stm
 FOR '(' assign ';' rel_exp ';' stm ')'
     stmlist
 END_FOR
+
+do_stm
+:
+DO
+    stmlist
+THEN WHILE rel_block
 /// END-LOOPS
 
 
@@ -146,6 +152,7 @@ stm : assign {}
     | switch_stmts {}
     | while_stmts {}
     | for_stm {}
+    | do_stm {}
     | declar {}
     ;
 

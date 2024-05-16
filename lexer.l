@@ -48,7 +48,6 @@
 "END-FOR"                                                    {return END_FOR;}
 
 "DO"                                                         {return DO;}
-"END-DO"                                                     {return END_DO;}
 
 "PROCEDURE"                                                  {return PROCEDURE;}
 "END-PROCEDURE"                                              {return END_PROCEDURE;}
