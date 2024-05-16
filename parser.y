@@ -43,28 +43,34 @@ prog : stmlist {}
 	 ;
 
 
-/// TODO: NOT
-relational_operator : RELATIONAL | AND | OR | XOR;
+/// RELATIONALS
 
-relational : ID relational_operator ID {}
-           ;
+/// TODO: NOT
+rel_operator : RELATIONAL | AND | OR | XOR;
+rel_exp : ID rel_operator ID {};
+rel_block : '(' rel_exp ')' {};
+
+/// END-RELATIONALS
+
+
+
+
 
 /// CONDITIONALS
 
-if_exp : '(' relational ')' {};
-if_elifs : ELIF if_exp stmlist if_elifs {} | {};
+if_elifs : ELIF rel_block stmlist if_elifs {} | {};
 if_else : ELSE stmlist {} | {};
 
 if_stmts
 :
-IF if_exp
+IF rel_block
     stmlist
 if_elifs
 if_else
 END_IF {printf("if\n");}
 ;
 
-switch_case_optional :  stmlist {}
+switch_case_optional : stmlist {}
                      | stmlist BREAK ';' {}
                      | BREAK ';' {}
                      | {};
@@ -85,15 +91,25 @@ END_SWITCH {printf("switch\n");};
 
 /// END-CONDITIONALS
 
+
+
+
+
 /// LOOPS
 
 while_stmts 
 : 
-WHILE if_exp
+WHILE rel_block
     stmlist
 END_WHILE {printf("while\n");};
 
 /// END-LOOPS
+
+
+
+
+
+/// STMS
 
 stm : ID '=' ID ';'        {}
     | if_stmts                      {}
@@ -104,6 +120,8 @@ stm : ID '=' ID ';'        {}
 stmlist : stm				        {}
 		| stm stmlist	            {}
 	    ;
+
+/// END-STMS
 %%
 
 int main (void) {
