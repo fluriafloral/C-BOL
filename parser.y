@@ -135,8 +135,8 @@ exp
 /// END-EXPRESSIONS
 
 /// STMS
-
-stm : ID '=' exp
+assign : ID '=' exp;
+stm : assign {}
     | if_stmts {}
     | switch_stmts {}
     | while_stmts {}
