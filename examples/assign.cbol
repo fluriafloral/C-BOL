@@ -1,0 +1,9 @@
+// ASSIGN
+
+x = y;
+x = ();
+x = 73;
+x = 7.3r;
+x = 7.3;
+x = '\t';
+x = "Hello, world!";
