@@ -1,0 +1,31 @@
+// IF
+
+IF (x < y)
+    x = y;
+END-IF
+
+IF (x < 1)
+    x = y;
+END-IF
+
+IF ("Owweee" < 1)
+    x = y;
+END-IF
+
+IF (x < y)
+    x = y;
+ELIF (x < 10)
+    x = 30;
+END-IF
+
+// SWITCH
+// TODO: Example with CASE OTHER
+SWITCH (x)
+    CASE 1 THRU 8:
+        x = 9;
+        BREAK;
+    CASE y:
+    CASE 10:
+        x = 50;
+        BREAK;
+END-SWITCH
