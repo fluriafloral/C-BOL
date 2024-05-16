@@ -46,7 +46,7 @@ prog : stmlist {}
 
 /// TODO: NOT
 rel_operator : RELATIONAL | AND | OR | XOR;
-rel_exp : ID rel_operator ID {};
+rel_exp : exp rel_operator exp {};
 rel_block : '(' rel_exp ')' {};
 
 /// END-RELATIONALS
@@ -74,17 +74,17 @@ switch_case_optional : stmlist {}
                      | BREAK ';' {}
                      | {};
 
-switch_case : CASE ID ':' switch_case_optional {}
-            | CASE ID ':' switch_case_optional switch_case {}
-            | CASE ID THRU ID ':' switch_case_optional {}
-            | CASE ID THRU ID ':' switch_case_optional switch_case {}
+switch_case : CASE exp ':' switch_case_optional {}
+            | CASE exp ':' switch_case_optional switch_case {}
+            | CASE exp THRU exp ':' switch_case_optional {}
+            | CASE exp THRU exp ':' switch_case_optional switch_case {}
             | CASE OTHER ':' stmlist {}
             | CASE OTHER ':' stmlist BREAK ';' {}
             ;
         
 switch_stmts
 :
-SWITCH '(' ID ')'
+SWITCH '(' exp ')'
     switch_case
 END_SWITCH {printf("switch\n");};
 
@@ -111,8 +111,8 @@ END_WHILE {printf("while\n");};
 declar
     : TYPE ID ';'
     | LARGE TYPE ID ';' /// TODO: Only large types 
-    | DEFINE TYPE ID '=' ID ';'
-    | CONST TYPE ID '=' ID ';'
+    | DEFINE TYPE ID '=' exp ';'
+    | CONST TYPE ID '=' exp ';'
     ;
 /// END-DECLARATIONS
 
@@ -120,9 +120,24 @@ declar
 
 
 
+/// EXPRESSIONS
+exp_value
+    : UNIT
+    | INTEGER
+    | REAL
+    | DECIMAL
+    | CHARACTER
+    | TEXT
+    ;
+exp
+    : exp_value
+    | ID
+    ;
+/// END-EXPRESSIONS
+
 /// STMS
 
-stm : ID '=' ID ';'        {}
+stm : ID '=' exp ';'        {}
     | if_stmts                      {}
     | switch_stmts                  {}
     | while_stmts                   {}
