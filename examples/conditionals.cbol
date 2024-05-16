@@ -2,21 +2,21 @@
 
 IF (x < y)
     x = y;
-END-IF
+END-IF;
 
 IF (x < 1)
     x = y;
-END-IF
+END-IF;
 
 IF ("Owweee" < 1)
     x = y;
-END-IF
+END-IF;
 
 IF (x < y)
     x = y;
 ELIF (x < 10)
     x = 30;
-END-IF
+END-IF;
 
 // SWITCH
 // TODO: Example with CASE OTHER
@@ -28,4 +28,4 @@ SWITCH (x)
     CASE 10:
         x = 50;
         BREAK;
-END-SWITCH
+END-SWITCH;

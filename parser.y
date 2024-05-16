@@ -38,7 +38,7 @@ extern char * yytext;
 %type <sValue> stm
 
 %%
-prog : stmlist {} 
+prog : stmlist 
 	 ;
 
 
@@ -46,8 +46,8 @@ prog : stmlist {}
 
 /// TODO: NOT
 rel_operator : RELATIONAL | AND | OR | XOR;
-rel_exp : exp rel_operator exp {};
-rel_block : '(' rel_exp ')' {};
+rel_exp : exp rel_operator exp;
+rel_block : '(' rel_exp ')';
 
 /// END-RELATIONALS
 
@@ -57,8 +57,8 @@ rel_block : '(' rel_exp ')' {};
 
 /// CONDITIONALS
 
-if_elifs : ELIF rel_block stmlist if_elifs {} | {};
-if_else : ELSE stmlist {} | {};
+if_elifs : ELIF rel_block stmlist if_elifs |;
+if_else : ELSE stmlist |;
 
 if_stmts
 :
@@ -66,27 +66,27 @@ IF rel_block
     stmlist
 if_elifs
 if_else
-END_IF {printf("if\n");}
+END_IF
 ;
 
-switch_case_optional : stmlist {}
-                     | stmlist BREAK ';' {}
-                     | BREAK ';' {}
-                     | {};
+switch_case_optional : stmlist
+                     | stmlist BREAK ';'
+                     | BREAK ';'
+                     |;
 
-switch_case : CASE exp ':' switch_case_optional {}
-            | CASE exp ':' switch_case_optional switch_case {}
-            | CASE exp THRU exp ':' switch_case_optional {}
-            | CASE exp THRU exp ':' switch_case_optional switch_case {}
-            | CASE OTHER ':' stmlist {}
-            | CASE OTHER ':' stmlist BREAK ';' {}
+switch_case : CASE exp ':' switch_case_optional
+            | CASE exp ':' switch_case_optional switch_case
+            | CASE exp THRU exp ':' switch_case_optional
+            | CASE exp THRU exp ':' switch_case_optional switch_case
+            | CASE OTHER ':' stmlist
+            | CASE OTHER ':' stmlist BREAK ';'
             ;
         
 switch_stmts
 :
 SWITCH '(' exp ')'
     switch_case
-END_SWITCH {printf("switch\n");};
+END_SWITCH
 
 /// END-CONDITIONALS
 
@@ -100,7 +100,7 @@ while_stmts
 : 
 WHILE rel_block
     stmlist
-END_WHILE {printf("while\n");};
+END_WHILE
 
 /// END-LOOPS
 
@@ -109,9 +109,9 @@ END_WHILE {printf("while\n");};
 
 /// DECLARATIONS
 declar
-    : TYPE ID ';'
-    | LARGE TYPE ID ';' /// TODO: Only large types 
-    | CONST TYPE ID '=' exp ';'
+    : TYPE ID
+    | LARGE TYPE ID /// TODO: Only large types 
+    | CONST TYPE ID '=' exp
     ;
 /// END-DECLARATIONS
 
@@ -136,15 +136,15 @@ exp
 
 /// STMS
 
-stm : ID '=' exp ';'        {}
-    | if_stmts                      {}
-    | switch_stmts                  {}
-    | while_stmts                   {}
-    | declar                        {}
+stm : ID '=' exp
+    | if_stmts {}
+    | switch_stmts {}
+    | while_stmts {}
+    | declar {}
     ;
 
-stmlist : stm				        {}
-		| stm stmlist	            {}
+stmlist : stm ';'
+		| stm ';' stmlist
 	    ;
 
 /// END-STMS
