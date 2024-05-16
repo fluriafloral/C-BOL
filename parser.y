@@ -111,7 +111,6 @@ END_WHILE {printf("while\n");};
 declar
     : TYPE ID ';'
     | LARGE TYPE ID ';' /// TODO: Only large types 
-    | DEFINE TYPE ID '=' exp ';'
     | CONST TYPE ID '=' exp ';'
     ;
 /// END-DECLARATIONS
