@@ -62,8 +62,6 @@ if_stmts : IF exp stmlist if_elifs if_else END_IF
          ;
 
 switch_case_optional : stmlist
-                     | stmlist BREAK ';'
-                     | BREAK ';'
                      |
                      ;
 
@@ -72,7 +70,6 @@ switch_case : CASE exp ':' switch_case_optional
             | CASE exp THRU exp ':' switch_case_optional
             | CASE exp THRU exp ':' switch_case_optional switch_case
             | CASE OTHER ':' stmlist
-            | CASE OTHER ':' stmlist BREAK ';'
             ;
         
 switch_stmts : SWITCH exp switch_case END_SWITCH
@@ -170,6 +167,7 @@ stm : assign {}
     | expect_stm {}
     | try_stm {}
     | CONTINUE {}
+    | BREAK {}
     ;
 
 stmlist : stm ';'

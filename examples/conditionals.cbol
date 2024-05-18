@@ -24,8 +24,12 @@ SWITCH (x)
     CASE 1 THRU 8:
         x = 1 < 10;
         BREAK;
+        x = 2;
     CASE y:
     CASE 10:
+        IF (x < 10)
+            BREAK;
+        END-IF;
         x = 50;
         BREAK;
 END-SWITCH;
