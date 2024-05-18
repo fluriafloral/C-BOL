@@ -28,7 +28,7 @@ extern char * yytext;
 %token PROCEDURE END_PROCEDURE END_FUNCTION
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
-%token LAZY
+%token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
 %token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
@@ -188,10 +188,15 @@ exp_arith : exp '+' exp
           | exp '^' exp
           ;
 
+exp_lazy : LAZY
+         | LAZY_RIGHT
+         ;
+
 exp : exp_literal
     | ID
     | exp_logic
     | exp_arith
+    | exp_lazy '(' exp_arith ')'
     | '(' exp ')'
     ;
 /// END-EXPRESSIONS
