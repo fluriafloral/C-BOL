@@ -37,6 +37,7 @@ extern char * yytext;
 
 /// ASSOCIATIVITY AND PRECEDENCE
 /// https://www.gnu.org/software/bison/manual/html_node/Precedence.html
+
 %left RELATIONAL
 %left OR XOR
 %left AND
@@ -135,7 +136,7 @@ declar_struct : STRUCT ID declar_struct_fields END_STRUCT
               ;
 
 declar_enum_item : ID
-                 | ID '=' exp_value
+                 | ID '=' exp_literal
                  ;
 
 declar_enum_items : declar_enum_item
@@ -158,7 +159,7 @@ declar : type ID
 
 
 /// EXPRESSIONS
-exp_value : UNIT
+exp_literal : UNIT
           | INTEGER
           | REAL
           | DECIMAL
@@ -173,7 +174,7 @@ exp_logic : exp RELATIONAL exp
           | NOT exp
           ;
 
-exp : exp_value
+exp : exp_literal
     | ID
     | exp_logic
     | '(' exp ')'
