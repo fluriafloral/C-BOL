@@ -1,6 +1,9 @@
 // FOR
 
 FOR (i = 0; i < 10; i = 10)
+    IF (i == 1)
+        CONTINUE;
+    END-IF;
     x = i;
 END-FOR;
 

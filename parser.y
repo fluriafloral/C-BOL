@@ -169,11 +169,12 @@ stm : assign {}
     | declar {}
     | expect_stm {}
     | try_stm {}
+    | CONTINUE {}
     ;
 
 stmlist : stm ';'
-		| stm ';' stmlist
-	    ;
+	| stm ';' stmlist
+	;
 
 /// END-STMS
 %%
