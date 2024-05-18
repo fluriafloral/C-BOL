@@ -8,7 +8,8 @@
 
 %%
 
-[ \t\n]                                                      ;
+[ \t]                                                        ;
+\n                                                           {yylineno++;}
 "//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {}
             
 [0-9]+                                                       {yylval.sValue = strdup(yytext); return INTEGER;}
