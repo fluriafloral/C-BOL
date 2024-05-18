@@ -66,6 +66,7 @@
 "EXPECT"                                                     {return EXPECT;}
 
 "LAZY"                                                       {return LAZY;}
+"LAZY RIGHT"                                                 {return LAZY_RIGHT;}
 
 "NOT"                                                        {return NOT;}
 "AND"                                                        {return AND;}
