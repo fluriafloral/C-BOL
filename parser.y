@@ -126,8 +126,16 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 /// DECLARATIONS
+declar_struct_fields : type ID ';'
+                     | type ID ';' declar_struct_fields
+                     ;
+
+declar_struct : STRUCT ID declar_struct_fields END_STRUCT
+              ;
+
 declar : type ID
        | CONST type ID '=' exp
+       | declar_struct
        ;
 
 /// END-DECLARATIONS

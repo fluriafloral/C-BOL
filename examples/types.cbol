@@ -1,0 +1,4 @@
+STRUCT mystruct
+    TEXT x;
+    INTEGER y;
+END-STRUCT;
