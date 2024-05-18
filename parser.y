@@ -35,37 +35,22 @@ extern char * yytext;
 
 %start prog
 
+/// ASSOCIATIVITY AND PRECEDENCE
+/// https://www.gnu.org/software/bison/manual/html_node/Precedence.html
+%left RELATIONAL
+%left OR XOR
+%left AND
+%left NOT
+
 %type <sValue> stm
 
 %%
-prog : stmlist 
-	 ;
-
-
-/// RELATIONALS
-
-/// TODO: NOT
-rel_operator : RELATIONAL 
-             | AND 
-             | OR 
-             | XOR
-             ;
-
-rel_exp : exp rel_operator exp
-        ;
-
-rel_block : '(' rel_exp ')'
-          ;
-
-/// END-RELATIONALS
-
-
-
-
+prog : stmlist
+     ;
 
 /// CONDITIONALS
 
-if_elifs : ELIF rel_block stmlist if_elifs 
+if_elifs : ELIF exp stmlist if_elifs 
          |
          ;
 
@@ -73,7 +58,7 @@ if_else : ELSE stmlist
         |
         ;
 
-if_stmts : IF rel_block stmlist if_elifs if_else END_IF
+if_stmts : IF exp stmlist if_elifs if_else END_IF
          ;
 
 switch_case_optional : stmlist
@@ -90,7 +75,7 @@ switch_case : CASE exp ':' switch_case_optional
             | CASE OTHER ':' stmlist BREAK ';'
             ;
         
-switch_stmts : SWITCH '(' exp ')' switch_case END_SWITCH
+switch_stmts : SWITCH exp switch_case END_SWITCH
              ;
 
 /// END-CONDITIONALS
@@ -101,13 +86,13 @@ switch_stmts : SWITCH '(' exp ')' switch_case END_SWITCH
 
 /// LOOPS
 
-while_stmts : WHILE rel_block stmlist END_WHILE
+while_stmts : WHILE exp stmlist END_WHILE
             ;
 
-for_stm : FOR '(' assign ';' rel_exp ';' stm ')' stmlist END_FOR
+for_stm : FOR '(' assign ';' exp ';' stm ')' stmlist END_FOR
         ;
 
-do_stm : DO stmlist THEN WHILE rel_block
+do_stm : DO stmlist THEN WHILE exp
        ;
 
 /// END-LOOPS
@@ -116,7 +101,7 @@ do_stm : DO stmlist THEN WHILE rel_block
 
 
 /// EXCEPTIONS
-expect_stm : EXPECT rel_block ELSE TEXT
+expect_stm : EXPECT exp ELSE TEXT
            ;
 
 try_catches : CATCH '(' TYPE ID ')' stmlist
@@ -157,8 +142,17 @@ exp_value : UNIT
           | TEXT
           ;
 
+exp_logic : exp RELATIONAL exp
+          | exp AND exp
+          | exp OR exp
+          | exp XOR exp
+          | NOT exp
+          ;
+
 exp : exp_value
     | ID
+    | exp_logic
+    | '(' exp ')'
     ;
 /// END-EXPRESSIONS
 

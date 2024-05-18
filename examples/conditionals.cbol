@@ -1,6 +1,6 @@
 // IF
 
-IF (x < y)
+IF (x < NOT y)
     x = y;
 END-IF;
 
@@ -8,11 +8,11 @@ IF (x < 1)
     x = y;
 END-IF;
 
-IF ("Owweee" < 1)
+IF ("Owweee" < 1 AND 1)
     x = y;
 END-IF;
 
-IF (x < y)
+IF x < y
     x = y;
 ELIF (x < 10)
     x = 30;
@@ -22,7 +22,7 @@ END-IF;
 // TODO: Example with CASE OTHER
 SWITCH (x)
     CASE 1 THRU 8:
-        x = 9;
+        x = 1 < 10;
         BREAK;
     CASE y:
     CASE 10:
