@@ -1,0 +1,4 @@
+INTEGER x = 3 + 2 ^ 2; // 3 + (2 ^ 2) -> 3 + 4 -> 7
+INTEGER x = 3 + 1 - 1; // 3
+INTEGER x = (3 * 2) / 2 - 1; // (3 * 2 / 2) - 1 -> 3 - 1 -> 2
+INTEGER x = 6 % 4; // rest of division of 6 by 2 -> 2

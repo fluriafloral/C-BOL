@@ -42,6 +42,9 @@ extern char * yytext;
 %left OR XOR OR_ELSE 
 %left AND AND_THEN
 %left NOT
+%left '+' '-'
+%left '*' '/' '%'
+%right '^'
 
 %type <sValue> stm
 
@@ -177,9 +180,18 @@ exp_logic : exp RELATIONAL exp
           | NOT exp
           ;
 
+exp_arith : exp '+' exp
+          | exp '-' exp
+          | exp '*' exp
+          | exp '/' exp
+          | exp '%' exp
+          | exp '^' exp
+          ;
+
 exp : exp_literal
     | ID
     | exp_logic
+    | exp_arith
     | '(' exp ')'
     ;
 /// END-EXPRESSIONS
