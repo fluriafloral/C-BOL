@@ -69,7 +69,9 @@
 
 "NOT"                                                        {return NOT;}
 "AND"                                                        {return AND;}
+"AND THEN"                                                   {return AND_THEN;}
 "OR"                                                         {return OR;}
+"OR ELSE"                                                    {return OR_ELSE;}
 "XOR"                                                        {return XOR;}
 
 "^"                                                          {return yytext[0];}
