@@ -48,6 +48,13 @@ extern char * yytext;
 prog : stmlist
      ;
 
+/// TYPES
+type : P_TYPE
+     | LARGE P_TYPE
+     ;
+
+/// END-TYPES
+
 /// CONDITIONALS
 
 if_elifs : ELIF exp stmlist if_elifs 
@@ -119,9 +126,8 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 /// DECLARATIONS
-declar : P_TYPE ID
-       | LARGE P_TYPE ID /// TODO: Only large P_TYPEs 
-       | CONST P_TYPE ID '=' exp
+declar : type ID
+       | CONST type ID '=' exp
        ;
 
 /// END-DECLARATIONS
