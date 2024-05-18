@@ -149,8 +149,15 @@ declar_enum_items : declar_enum_item
 declar_enum : ENUM ID declar_enum_items END_ENUM
             ;
 
-declar : type ID
-       | type ID '=' exp
+declar_var : ID
+           | ID '=' exp
+           ;
+
+declar_vars : declar_var
+            | declar_var ',' declar_vars
+            ;
+
+declar : type declar_vars
        | CONST type ID '=' exp
        | declar_struct
        | declar_enum

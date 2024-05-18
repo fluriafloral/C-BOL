@@ -1,12 +1,26 @@
 // BASIC
 
 UNIT x;
-EMPTY x;
 INTEGER x;
 REAL x;
 DECIMAL x;
 CHARACTER x;
 TEXT x;
+
+// MANY VARIABLES
+
+UNIT x,y;
+INTEGER x, y;
+REAL x, y;
+DECIMAL x, y;
+CHARACTER x, y;
+TEXT x, y;
+UNIT x = (), y;
+INTEGER x, y = 1;
+REAL x = 1.4r, y = 4.0r;
+DECIMAL x = 7.3, y;
+CHARACTER x, y = 'a';
+TEXT x, y = "C-BOL is amazing!";
 
 // LARGE
 
