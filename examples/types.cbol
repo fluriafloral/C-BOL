@@ -2,3 +2,13 @@ STRUCT mystruct
     TEXT x;
     INTEGER y;
 END-STRUCT;
+
+ENUM weekday
+    saturday,
+    sunday = (),
+    monday = 10,
+    tuesday,
+    wednesday,
+    thursday = "TBT",
+    friday
+END-ENUM;

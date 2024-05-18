@@ -133,9 +133,21 @@ declar_struct_fields : type ID ';'
 declar_struct : STRUCT ID declar_struct_fields END_STRUCT
               ;
 
+declar_enum_item : ID
+                 | ID '=' exp_value
+                 ;
+
+declar_enum_items : declar_enum_item
+                  | declar_enum_item ',' declar_enum_items
+                  ;
+
+declar_enum : ENUM ID declar_enum_items END_ENUM
+            ;
+
 declar : type ID
        | CONST type ID '=' exp
        | declar_struct
+       | declar_enum
        ;
 
 /// END-DECLARATIONS
