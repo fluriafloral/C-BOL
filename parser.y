@@ -147,6 +147,7 @@ declar_enum : ENUM ID declar_enum_items END_ENUM
             ;
 
 declar : type ID
+       | type ID '=' exp
        | CONST type ID '=' exp
        | declar_struct
        | declar_enum
