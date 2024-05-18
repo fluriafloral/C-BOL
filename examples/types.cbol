@@ -1,8 +1,7 @@
-STRUCT mystruct
-    TEXT x;
-    INTEGER y;
-END-STRUCT;
-
+// ENUMERATION
+/*
+    In C-BOL, you can (optional) initialize enumeration items with value.
+*/
 ENUM weekday
     saturday,
     sunday = (),
@@ -12,3 +11,10 @@ ENUM weekday
     thursday = "TBT",
     friday
 END-ENUM;
+
+// STRUCT
+
+STRUCT mystruct
+    TEXT x;
+    weekday y;
+END-STRUCT;
