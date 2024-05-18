@@ -51,6 +51,7 @@ prog : stmlist
 /// TYPES
 type : P_TYPE
      | LARGE P_TYPE
+     | ID
      ;
 
 /// END-TYPES
