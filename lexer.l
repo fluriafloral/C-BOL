@@ -19,7 +19,7 @@
 '.?'|'\\.?'                                                  {yylval.sValue = strdup(yytext); return CHARACTER;}
 \".*\"                                                       {yylval.sValue = strdup(yytext); return TEXT;}
 
-"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = strdup(yytext); return TYPE;}
+"UNIT"|"EMPTY"|"INTEGER"|"REAL"|"DECIMAL"|"CHARACTER"|"TEXT" {yylval.sValue = strdup(yytext); return P_TYPE;}
 
 "LARGE"                                                      {return LARGE;}
 "DEFINE"                                                     {return DEFINE;}

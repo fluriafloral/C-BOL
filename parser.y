@@ -17,7 +17,7 @@ extern char * yytext;
 %token <sValue> REAL
 %token <sValue> CHARACTER
 %token <sValue> TEXT
-%token <sValue> TYPE
+%token <sValue> P_TYPE
 %token <sValue> RELATIONAL
 %token <sValue> ID
 %token UNIT
@@ -101,8 +101,8 @@ do_stm : DO stmlist THEN WHILE exp
 expect_stm : EXPECT exp ELSE TEXT
            ;
 
-try_catches : CATCH '(' TYPE ID ')' stmlist
-            | CATCH '(' TYPE ID ')' stmlist try_catches
+try_catches : CATCH '(' P_TYPE ID ')' stmlist
+            | CATCH '(' P_TYPE ID ')' stmlist try_catches
             ;
 
 try_finally_optional : FINALLY stmlist
@@ -119,9 +119,9 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 /// DECLARATIONS
-declar : TYPE ID
-       | LARGE TYPE ID /// TODO: Only large types 
-       | CONST TYPE ID '=' exp
+declar : P_TYPE ID
+       | LARGE P_TYPE ID /// TODO: Only large P_TYPEs 
+       | CONST P_TYPE ID '=' exp
        ;
 
 /// END-DECLARATIONS
