@@ -8,7 +8,8 @@ IF (x < 1)
     x = y;
 END-IF;
 
-IF ("Owweee" < 1 AND 1)
+// AND THEN short-circuit evaluation
+IF ("Owweee" < 0 AND THEN 1)
     x = y;
 END-IF;
 

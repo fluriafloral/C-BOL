@@ -29,7 +29,7 @@ extern char * yytext;
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY
-%token NOT AND OR XOR
+%token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
 %token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
 
@@ -39,8 +39,8 @@ extern char * yytext;
 /// https://www.gnu.org/software/bison/manual/html_node/Precedence.html
 
 %left RELATIONAL
-%left OR XOR
-%left AND
+%left OR XOR OR_ELSE 
+%left AND AND_THEN
 %left NOT
 
 %type <sValue> stm
@@ -169,7 +169,9 @@ exp_literal : UNIT
 
 exp_logic : exp RELATIONAL exp
           | exp AND exp
+          | exp AND_THEN exp
           | exp OR exp
+          | exp OR_ELSE exp
           | exp XOR exp
           | NOT exp
           ;
