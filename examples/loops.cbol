@@ -1,6 +1,6 @@
 // FOR
 
-FOR (i = 0; i < 10; i = 10)
+FOR (INTEGER i = 0; i < 10; i = 10)
     IF (i == 1)
         CONTINUE;
     END-IF;

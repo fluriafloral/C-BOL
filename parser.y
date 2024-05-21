@@ -98,7 +98,11 @@ switch_stmts : SWITCH exp switch_case END_SWITCH
 while_stmts : WHILE exp stmlist END_WHILE
             ;
 
-for_stm : FOR '(' assign ';' exp ';' stm ')' stmlist END_FOR
+for_var_init : type assign
+             | assign
+             ;
+
+for_stm : FOR '(' for_var_init ';' exp ';' stm ')' stmlist END_FOR
         ;
 
 do_stm : DO stmlist THEN WHILE exp
