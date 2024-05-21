@@ -130,6 +130,16 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 
+/// PROCEDURE
+proc_stm : PROCEDURE ID stmlist END_PROCEDURE
+         ;
+/// END-PROCEDURE
+
+
+
+
+
+
 /// DECLARATIONS
 declar_struct_fields : type ID ';'
                      | type ID ';' declar_struct_fields
@@ -221,6 +231,7 @@ stm : assign {}
     | declar {}
     | expect_stm {}
     | try_stm {}
+    | proc_stm {}
     | CONTINUE {}
     | BREAK {}
     | THROW exp {}

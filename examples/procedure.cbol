@@ -1,0 +1,3 @@
+PROCEDURE hello
+    x = "Hello, World";
+END-PROCEDURE;
