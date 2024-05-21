@@ -223,6 +223,7 @@ stm : assign {}
     | try_stm {}
     | CONTINUE {}
     | BREAK {}
+    | THROW exp {}
     ;
 
 stmlist : stm ';'
