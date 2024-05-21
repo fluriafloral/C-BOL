@@ -130,6 +130,21 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 
+/// FUNCTIONS
+func_args : 
+          | type ID
+          | type ID ',' func_args
+          | type assign
+          ;
+          
+func_params : '(' func_args ')'
+            | UNIT
+            ;
+
+func_stm : type ID func_params stmlist END_FUNCTION
+         ;
+/// END-FUNCTIONS
+
 /// PROCEDURE
 proc_stm : PROCEDURE ID stmlist END_PROCEDURE
          ;
@@ -209,8 +224,17 @@ exp_lazy : LAZY
          | LAZY_RIGHT
          ;
 
+exp_func_opt : exp
+             | exp ',' exp_func_opt
+             ;
+
+exp_func_args : '(' exp_func_opt ')'
+              | UNIT
+              ;
+
 exp : exp_literal
     | ID
+    | ID exp_func_args
     | exp_logic
     | exp_arith
     | exp_lazy '(' exp_arith ')'
@@ -232,9 +256,11 @@ stm : assign {}
     | expect_stm {}
     | try_stm {}
     | proc_stm {}
+    | func_stm {}
     | CONTINUE {}
     | BREAK {}
     | THROW exp {}
+    | RETURN exp {}
     ;
 
 stmlist : stm ';'
