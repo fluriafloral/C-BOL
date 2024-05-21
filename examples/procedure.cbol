@@ -1,3 +1,5 @@
 PROCEDURE hello (INTEGER x, TEXT y = 0)
     x = "Hello, World";
 END-PROCEDURE;
+
+CALL hello(1);

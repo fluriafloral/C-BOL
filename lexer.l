@@ -50,6 +50,7 @@
 
 "DO"                                                         {return DO;}
 
+"CALL"                                                       {return CALL;}
 "PROCEDURE"                                                  {return PROCEDURE;}
 "END-PROCEDURE"                                              {return END_PROCEDURE;}
 "END-FUNCTION"                                               {return END_FUNCTION;}

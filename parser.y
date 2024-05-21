@@ -25,7 +25,7 @@ extern char * yytext;
 %token IF THEN ELIF ELSE END_IF
 %token SWITCH CASE THRU OTHER END_SWITCH
 %token WHILE END_WHILE FOR END_FOR DO
-%token PROCEDURE END_PROCEDURE END_FUNCTION
+%token CALL PROCEDURE END_PROCEDURE END_FUNCTION
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY LAZY_RIGHT
@@ -259,6 +259,7 @@ stm : assign {}
     | try_stm {}
     | proc_stm {}
     | func_stm {}
+    | CALL ID exp_func_args {}
     | CONTINUE {}
     | BREAK {}
     | THROW exp {}
