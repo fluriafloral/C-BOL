@@ -1,6 +1,6 @@
 %{
   #include <stdio.h>  
-  #include <stdlib.h>
+  #include <string.h>
   #include "y.tab.h"
 
   extern int yyerror (char *msg);
@@ -9,7 +9,7 @@
 %%
 
 [ \t]                                                        ;
-\n                                                           {yylineno++;}
+\n                                                           {yyleng++;}
 "//".*|"/*"([^*]|\*+[^*/])*\*+"/"                            {}
             
 [0-9]+                                                       {yylval.sValue = strdup(yytext); return INTEGER;}

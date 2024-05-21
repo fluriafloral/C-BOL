@@ -1,0 +1,3 @@
+PROCEDURE sum() THEN
+    INTEGER c = 10;
+END-PROCEDURE;   

@@ -3,7 +3,7 @@
 
 int yylex(void);
 int yyerror(char *s);
-extern int yylineno;
+extern int yyleng;
 extern char * yytext;
 
 %}
@@ -53,7 +53,7 @@ prog : stmlist
      ;
 
 /// TYPES
-type : P_TYPE
+type : P_TYPE       
      | LARGE P_TYPE
      | ID
      ;
@@ -105,6 +105,24 @@ do_stm : DO stmlist THEN WHILE exp
        ;
 
 /// END-LOOPS
+
+
+
+
+/// PROCEDURES
+
+param_list : param
+           | param ',' param_list
+           | ""
+           ;
+
+param : type ID;
+
+function_stmts  : type  ID '(' param_list ')' THEN stmlist END_FUNCTION;
+
+procedure_stmts  : PROCEDURE  ID '(' param_list ')' THEN stmlist END_PROCEDURE;
+
+/// END-PROCEDURES
 
 
 
@@ -218,11 +236,14 @@ stm : assign {}
     | while_stmts {}
     | for_stm {}
     | do_stm {}
+    | function_stmts {}
+    | procedure_stmts {}
     | declar {}
     | expect_stm {}
     | try_stm {}
     | CONTINUE {}
     | BREAK {}
+    | RETURN {}
     ;
 
 stmlist : stm ';'
@@ -237,6 +258,6 @@ int main (void) {
 }
 
 int yyerror (char *msg) {
-	fprintf (stderr, "%d: %s at '%s'\n", yylineno, msg, yytext);
+	fprintf (stderr, "%d: %s at '%s'\n", yyleng, msg, yytext);
 	return 0;
 }
