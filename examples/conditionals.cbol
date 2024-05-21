@@ -8,8 +8,8 @@ IF (x < 1)
     x = y;
 END-IF;
 
-// AND THEN short-circuit evaluation
-IF ("Owweee" < 0 AND THEN 1)
+// AND-THEN short-circuit evaluation
+IF ("Owweee" < 0 AND-THEN 1)
     x = y;
 END-IF;
 

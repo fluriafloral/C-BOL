@@ -66,13 +66,13 @@
 "EXPECT"                                                     {return EXPECT;}
 
 "LAZY"                                                       {return LAZY;}
-"LAZY RIGHT"                                                 {return LAZY_RIGHT;}
+"LAZY-RIGHT"                                                 {return LAZY_RIGHT;}
 
 "NOT"                                                        {return NOT;}
 "AND"                                                        {return AND;}
-"AND THEN"                                                   {return AND_THEN;}
+"AND-THEN"                                                   {return AND_THEN;}
 "OR"                                                         {return OR;}
-"OR ELSE"                                                    {return OR_ELSE;}
+"OR-ELSE"                                                    {return OR_ELSE;}
 "XOR"                                                        {return XOR;}
 
 "^"                                                          {return yytext[0];}

@@ -10,9 +10,9 @@ INTEGER x = LAZY (0 * 3 / 0); // 0 * _ = 0 -> 0
 
 // Causes error (division by zero) becauses operand order is left to right
 INTEGER x = LAZY (3 / 0 * 0);
-// In order to fix that, uses "LAZY RIGHT" (operand order is right to left)
-// TODO: Make sure LAZY RIGHT
-INTEGER x = LAZY RIGHT (3 / 0 * 0); // _ * 0 = 0 -> 0
+// In order to fix that, uses "LAZY-RIGHT" (operand order is right to left)
+// TODO: Make sure LAZY-RIGHT
+INTEGER x = LAZY-RIGHT (3 / 0 * 0); // _ * 0 = 0 -> 0
 
 INTEGER x = LAZY (1 ^ 0 / 0);
 
