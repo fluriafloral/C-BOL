@@ -130,26 +130,28 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 
-/// FUNCTIONS
-func_args : 
-          | type ID
-          | type ID ',' func_args
+/// PROCEDURE
+proc_args : type ID
+          | type ID ',' proc_args
           | type assign
           ;
           
-func_params : '(' func_args ')'
+proc_params : '(' proc_args ')'
             | UNIT
             ;
 
-func_stm : type ID func_params stmlist END_FUNCTION
-         ;
-/// END-FUNCTIONS
-
-/// PROCEDURE
-proc_stm : PROCEDURE ID stmlist END_PROCEDURE
+proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE
          ;
 /// END-PROCEDURE
 
+
+
+
+
+/// FUNCTIONS
+func_stm : type ID proc_params stmlist END_FUNCTION
+         ;
+/// END-FUNCTIONS
 
 
 
