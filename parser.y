@@ -111,18 +111,21 @@ do_stm : DO stmlist THEN WHILE exp
 
 /// PROCEDURES
 
-param_list : param
-           | param ',' param_list
-           | ""
-           ;
+proc_params : type ID
+          | type ID ',' proc_params
+          | type assign
+          ;
+          
+args_list : '(' proc_params ')'
+            | UNIT
+            ;
 
-param : type ID;
+function_stmts  : type  ID args_list stmlist END_FUNCTION;
 
-function_stmts  : type  ID '(' param_list ')' THEN stmlist END_FUNCTION;
-
-procedure_stmts  : PROCEDURE  ID '(' param_list ')' THEN stmlist END_PROCEDURE;
+procedure_stmts  : PROCEDURE  ID args_list stmlist END_PROCEDURE;
 
 /// END-PROCEDURES
+
 
 
 
