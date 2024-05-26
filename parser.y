@@ -162,8 +162,12 @@ func_stm : type ID proc_params stmlist END_FUNCTION
 
 
 /// DECLARATIONS
-declar_struct_fields : type ID ';'
-                     | type ID ';' declar_struct_fields
+declar_struct_field : type ID 
+                    | type ID '[' exp ']' 
+                    ;
+
+declar_struct_fields : declar_struct_field ';'
+                     | declar_struct_field ';' declar_struct_fields
                      ;
 
 declar_struct : STRUCT ID declar_struct_fields END_STRUCT
@@ -182,6 +186,7 @@ declar_enum : ENUM ID declar_enum_items END_ENUM
 
 declar_var : ID
            | ID '=' exp
+           | ID '[' exp ']'
            | ID '[' exp ']'
            ;
 
