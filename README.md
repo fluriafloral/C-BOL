@@ -8,6 +8,8 @@ Hannah Santos, Isaac Lourenço, Mateus Loiola, Pedro Silva
 
 lex lexer.l
 
-gcc lex.yy.c
+yacc parser.y -d -v -g
+
+gcc lex.yy.c y.tab.c
 
 ./a.out (ler da entrada padrão) ou ./a.out < examples/fileName.cbol (ler arquivo de testes)
