@@ -265,6 +265,7 @@ exp : exp_literal
 
 /// STMS
 assign : ID '=' exp
+       | ID '[' exp ']' '=' exp
        ;
        
 stm : assign {}
