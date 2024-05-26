@@ -51,10 +51,15 @@ CONST TEXT x = "Hello, world!";
 
 // ARRAY
 
-UNIT x[3];
-EMPTY y[4];
 INTEGER z[5];
 REAL a[6];
 DECIMAL b[7];
 CHARACTER c[8];
 TEXT i[9];
+INTEGER z[5], a[5];
+REAL a[6], b[6];
+DECIMAL b[7], c[7];
+CHARACTER c[8], i[8];
+TEXT i[9], j[9];
+INTEGER z[3] = {1,2,3};
+INTEGER z[] = {4,5,6};
