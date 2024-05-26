@@ -182,6 +182,7 @@ declar_enum : ENUM ID declar_enum_items END_ENUM
 
 declar_var : ID
            | ID '=' exp
+           | ID '[' exp ']'
            ;
 
 declar_vars : declar_var
