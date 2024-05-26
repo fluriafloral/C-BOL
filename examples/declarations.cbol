@@ -48,3 +48,13 @@ CONST REAL x = 7.3r;
 CONST DECIMAL x = 7.3;
 CONST CHARACTER x = '\t';
 CONST TEXT x = "Hello, world!";
+
+// ARRAY
+
+UNIT x[3];
+EMPTY y[4];
+INTEGER z[5];
+REAL a[6];
+DECIMAL b[7];
+CHARACTER c[8];
+TEXT i[9];
