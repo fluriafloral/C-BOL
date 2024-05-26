@@ -187,7 +187,8 @@ declar_enum : ENUM ID declar_enum_items END_ENUM
 declar_var : ID
            | ID '=' exp
            | ID '[' exp ']'
-           | ID '[' exp ']'
+           | ID '[' exp ']' '=' exp
+           | ID '[' ']' '=' exp
            ;
 
 declar_vars : declar_var
@@ -244,9 +245,17 @@ exp_func_args : '(' exp_func_opt ')'
               | UNIT
               ;
 
+exp_array_values : exp
+                 | exp ',' exp_array_values
+                 ;
+
+exp_array_list : '{' exp_array_values '}'
+               ;
+
 exp : exp_literal
     | ID
     | ID exp_func_args
+    | exp_array_list
     | exp_logic
     | exp_arith
     | exp_lazy '(' exp_arith ')'
