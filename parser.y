@@ -103,6 +103,7 @@ for_var_init : type assign
              ;
 
 for_stm : FOR '(' for_var_init ';' exp ';' stm ')' stmlist END_FOR
+        | FOR '(' type ID ':' ID ')' stmlist END_FOR
         ;
 
 do_stm : DO stmlist THEN WHILE exp
