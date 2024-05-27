@@ -253,7 +253,8 @@ exp_array_list : '{' exp_array_values '}'
                ;
 
 exp : exp_literal
-    | ID
+    | ID 
+    | ID '[' exp ']'
     | ID exp_func_args
     | exp_array_list
     | exp_logic
