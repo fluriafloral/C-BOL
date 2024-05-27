@@ -7,6 +7,15 @@ FOR (INTEGER i = 0; i < 10; i = 10)
     x = i;
 END-FOR;
 
+// FOR-EACH
+
+FOR (INTEGER i : arrayname) 
+    IF (i == 1)
+        CONTINUE;
+    END-IF;
+    y = i;
+END-FOR; 
+
 // DO-THEN-WHILE
 
 DO
