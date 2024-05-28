@@ -1,0 +1,4 @@
+INTEGER sum(INTEGER a, INTEGER b)
+    INTEGER c = a + b;
+    RETURN c;
+END-FUNCTION;

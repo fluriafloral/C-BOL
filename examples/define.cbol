@@ -1,0 +1,7 @@
+DEFINE swap(INTEGER a, INTEGER b) 
+    DO
+        INTEGER temp = a;    
+        a = b;
+        b = temp;
+    THEN WHILE(0);
+;

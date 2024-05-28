@@ -21,7 +21,7 @@ extern char * yytext;
 %token <sValue> RELATIONAL
 %token <sValue> ID
 %token UNIT
-%token LARGE DEFINE ENUM END_ENUM STRUCT END_STRUCT CONST
+%token LARGE DEFINE END_DEFINE ENUM END_ENUM STRUCT END_STRUCT CONST
 %token IF THEN ELIF ELSE END_IF
 %token SWITCH CASE THRU OTHER END_SWITCH
 %token WHILE END_WHILE FOR END_FOR DO
@@ -127,6 +127,13 @@ procedure_stmts  : PROCEDURE  ID args_list stmlist END_PROCEDURE;
 /// END-PROCEDURES
 
 
+
+/// DEFINE
+
+define_stmts : DEFINE ID args_list stmlist;
+    | DEFINE type ID exp;
+
+/// END-CONSTANTS
 
 
 
@@ -234,6 +241,7 @@ assign : ID '=' exp
        ;
        
 stm : assign {}
+    | define_stmts {}
     | if_stmts {}
     | switch_stmts {}
     | while_stmts {}

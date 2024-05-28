@@ -24,6 +24,7 @@
 
 "LARGE"                                                      {return LARGE;}
 "DEFINE"                                                     {return DEFINE;}
+"END-DEFINE"                                                 {return END_DEFINE;}
 "ENUM"                                                       {return ENUM;}
 "END-ENUM"                                                   {return END_ENUM;}
 "STRUCT"                                                     {return STRUCT;}
