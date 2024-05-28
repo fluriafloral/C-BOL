@@ -138,6 +138,8 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 /// PROCEDURE
 proc_args : type ID
           | type ID ',' proc_args
+          | type ID '[' ']'
+          | type ID '[' ']' ',' proc_args
           | type assign
           ;
           
