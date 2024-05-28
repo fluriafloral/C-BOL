@@ -188,11 +188,14 @@ declar_enum_items : declar_enum_item
 declar_enum : ENUM ID declar_enum_items END_ENUM
             ;
 
+declar_array_dimensions :
+                        | '[' exp ']' declar_array_dimensions
+                        ;
+
 declar_var : ID
            | ID '=' exp
-           | ID '[' exp ']'
-           | ID '[' exp ']' '=' exp
-           | ID '[' ']' '=' exp
+           | ID '[' exp ']' declar_array_dimensions
+           | ID '[' exp ']' declar_array_dimensions '=' exp
            ;
 
 declar_vars : declar_var

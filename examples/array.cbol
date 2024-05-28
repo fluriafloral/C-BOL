@@ -1,0 +1,3 @@
+// All array dimensions size are explicit
+INTEGER ns[10][2][3];
+TEXT txs[10];
