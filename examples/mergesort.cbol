@@ -13,11 +13,13 @@ PROCEDURE merge(INTEGER arr[], INTEGER l, INTEGER m, INTEGER r)
     // Create temp arrays
     INTEGER L[n1], R[n2];
 
-    // Copy data to temp arrays L[] and R[]
-    FOR (i = 0; i < n1; i++)
+    FOR (i = 0; i < n1; i += 1)
         L[i] = arr[l + i];
-    FOR (j = 0; j < n2; j++)
+    END-FOR;
+    
+    FOR (j = 0; j < n2; j += 1)
         R[j] = arr[m + 1 + j];
+    END-FOR;
 
     // Merge the temp arrays back into arr[l..r]
     i = 0;
@@ -26,29 +28,29 @@ PROCEDURE merge(INTEGER arr[], INTEGER l, INTEGER m, INTEGER r)
     WHILE (i < n1 AND-THEN j < n2)
         IF (L[i] <= R[j])
             arr[k] = L[i];
-            i++;
+            i += 1;
         ELSE
             arr[k] = R[j];
-            j++;
+            j += 1;
         END-IF;
 
-        k++;
+        k += 1;
     END-WHILE;
 
     // Copy the remaining elements of L[],
     // IF there are any
     WHILE (i < n1)
         arr[k] = L[i];
-        i++;
-        k++;
+        i += 1;
+        k += 1;
     END-WHILE;
 
     // Copy the remaining elements of R[],
     // IF there are any
     WHILE (j < n2)
         arr[k] = R[j];
-        j++;
-        k++;
+        j += 1;
+        k += 1;
     END-WHILE;
 END-PROCEDURE;
 
@@ -58,11 +60,10 @@ PROCEDURE mergeSort(INTEGER arr[], INTEGER l, INTEGER r)
     IF (l < r)
         INTEGER m = l + (r - l) / 2;
 
-        // Sort first and second halves
-        mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
+        CALL mergeSort(arr, l, m);
+        CALL mergeSort(arr, m + 1, r);
 
-        merge(arr, l, m, r);
+        CALL merge(arr, l, m, r);
     END-IF;
 END-PROCEDURE;
 
@@ -70,24 +71,25 @@ END-PROCEDURE;
 // A is a copy by C-BOL default behaviour
 PROCEDURE printArray(INTEGER A[])
     INTEGER i;
-    FOR (i = 0; i < A.size(); i++)
-        printf("%d ", A[i]);
-        
-    printf('\n');
+    FOR (i = 0; i < sizeof(A); i += 1)
+        CALL printf("%d ", A[i]);
+    END-FOR;
+    
+    CALL printf('\n');
 END-PROCEDURE;
 
 // Driver code
 INTEGER main()
-    INTEGER arr[] = { 12, 11, 13, 5, 6, 7 };
+    INTEGER arr[6] = { 12, 11, 13, 5, 6, 7 };
     INTEGER arr_size = sizeof(arr) / sizeof(arr[0]);
 
-    printf("Given array is \n");
-    printArray(arr, arr_size);
+    CALL printf("Given array is \n");
+    CALL printArray(arr, arr_size);
 
-    mergeSort(arr, 0, arr_size - 1);
+    CALL mergeSort(arr, 0, arr_size - 1);
 
-    printf("\nSorted array is \n");
-    printArray(arr);
+    CALL printf("\nSorted array is \n");
+    CALL printArray(arr);
 
     RETURN 0;
 END-FUNCTION;
