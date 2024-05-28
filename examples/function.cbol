@@ -1,0 +1,11 @@
+INTEGER five()
+    RETURN 5;
+END-FUNCTION;
+
+INTEGER sum(INTEGER x, INTEGER y)
+    RETURN x + y;
+END-FUNCTION;
+
+TEXT crazy(UNIT y, INTEGER x)
+    RETURN sum(x, pow(4, 2)) % x;
+END-FUNCTION;

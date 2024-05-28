@@ -1,0 +1,21 @@
+INTEGER x = 3 + 2 ^ 2; // 3 + (2 ^ 2) -> 3 + 4 -> 7
+INTEGER x = 3 + 1 - 1; // 3
+INTEGER x = (3 * 2) / 2 - 1; // (3 * 2 / 2) - 1 -> 3 - 1 -> 2
+INTEGER x = 6 % 4; // rest of division of 6 by 2 -> 2
+
+// LAZY
+// Operations with short-circuit 
+
+INTEGER x = LAZY (0 * 3 / 0); // 0 * _ = 0 -> 0
+
+// Causes error (division by zero) becauses operand order is left to right
+INTEGER x = LAZY (3 / 0 * 0);
+// In order to fix that, uses "LAZY-RIGHT" (operand order is right to left)
+// TODO: Make sure LAZY-RIGHT
+INTEGER x = LAZY-RIGHT (3 / 0 * 0); // _ * 0 = 0 -> 0
+
+INTEGER x = LAZY (1 ^ 0 / 0);
+
+// ... well known math properties
+
+

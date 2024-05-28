@@ -1,0 +1,65 @@
+// BASIC
+
+UNIT x;
+INTEGER x;
+REAL x;
+DECIMAL x;
+CHARACTER x;
+TEXT x;
+
+// MANY VARIABLES
+
+UNIT x,y;
+INTEGER x, y;
+REAL x, y;
+DECIMAL x, y;
+CHARACTER x, y;
+TEXT x, y;
+UNIT x = (), y;
+INTEGER x, y = 1;
+REAL x = 1.4r, y = 4.0r;
+DECIMAL x = 7.3, y;
+CHARACTER x, y = 'a';
+TEXT x, y = "C-BOL is amazing!";
+
+// LARGE
+
+LARGE UNIT x;
+LARGE EMPTY x;
+LARGE INTEGER x;
+LARGE REAL x;
+LARGE DECIMAL x;
+LARGE CHARACTER x;
+LARGE TEXT x;
+
+// CONST
+
+CONST UNIT x = y;
+CONST EMPTY x = y; // TODO: ?!
+CONST INTEGER x = y;
+CONST REAL x = y;
+CONST DECIMAL x = y;
+CONST CHARACTER x = y;
+CONST TEXT x = y;
+CONST UNIT x = ();
+CONST EMPTY x = y; // TODO: ?!
+CONST INTEGER x = 73;
+CONST REAL x = 7.3r;
+CONST DECIMAL x = 7.3;
+CONST CHARACTER x = '\t';
+CONST TEXT x = "Hello, world!";
+
+// ARRAY
+
+INTEGER z[5];
+REAL a[6];
+DECIMAL b[7];
+CHARACTER c[8];
+TEXT i[9];
+INTEGER z[5], a[5];
+REAL a[6], b[6];
+DECIMAL b[7], c[7];
+CHARACTER c[8], i[8];
+TEXT i[9], j[9];
+INTEGER z[3] = {1,2,3};
+INTEGER z[] = {4,5,6};

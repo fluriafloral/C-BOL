@@ -23,7 +23,7 @@ PROCEDURE merge(INTEGER arr[], INTEGER l, INTEGER m, INTEGER r)
     i = 0;
     j = 0;
     k = l;
-    WHILE (i < n1 AND THEN j < n2)
+    WHILE (i < n1 AND-THEN j < n2)
         IF (L[i] <= R[j])
             arr[k] = L[i];
             i++;
