@@ -1,9 +1,0 @@
-// Decrement
-INTEGER x = --x;
-INTEGER x = x--;
-INTEGER x = -(-x); // Other meaning
-INTEGER x = -(-soma(10, 20)); // Other meaning
-
-// Increment
-INTEGER x = ++x;
-INTEGER x = x++;
