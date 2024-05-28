@@ -30,7 +30,6 @@ extern char * yytext;
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
-%token INCREMENT DECREMENT
 %token '^' '*' '/' '%' '+' '-'
 %token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
 
@@ -261,10 +260,6 @@ exp_array_list : '{' exp_array_values '}'
 
 exp : exp_literal
     | ID
-    | DECREMENT ID
-    | ID DECREMENT
-    | INCREMENT ID
-    | ID INCREMENT
     | ID '[' exp ']'
     | ID exp_func_args
     | exp_array_list
@@ -275,6 +270,24 @@ exp : exp_literal
     | '-' exp
     ;
 /// END-EXPRESSIONS
+
+
+
+
+
+/// ASSIGN-OP
+assign_op_stm : ID '+' '=' exp
+              | ID '-' '=' exp
+              | ID '*' '=' exp
+              | ID '/' '=' exp
+              | ID '%' '=' exp
+              | ID '^' '=' exp
+              ;
+/// END-ASSIGN-OP
+
+
+
+
 
 /// STMS
 assign : ID '=' exp
@@ -297,6 +310,7 @@ stm : assign {}
     | BREAK {}
     | THROW exp {}
     | RETURN exp {}
+    | assign_op_stm {}
     ;
 
 stmlist : stm ';'
