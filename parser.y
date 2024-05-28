@@ -30,6 +30,7 @@ extern char * yytext;
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
+%token INCREMENT DECREMENT
 %token '^' '*' '/' '%' '+' '-'
 %token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
 
@@ -256,7 +257,11 @@ exp_array_list : '{' exp_array_values '}'
                ;
 
 exp : exp_literal
-    | ID 
+    | ID
+    | DECREMENT ID
+    | ID DECREMENT
+    | INCREMENT ID
+    | ID INCREMENT
     | ID '[' exp ']'
     | ID exp_func_args
     | exp_array_list
@@ -264,6 +269,7 @@ exp : exp_literal
     | exp_arith
     | exp_lazy '(' exp_arith ')'
     | '(' exp ')'
+    | '-' exp
     ;
 /// END-EXPRESSIONS
 

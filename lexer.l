@@ -82,6 +82,8 @@
 "%"                                                          {return yytext[0];}
 "+"                                                          {return yytext[0];}
 "-"                                                          {return yytext[0];}
+"--"                                                         {return DECREMENT;}
+"++"                                                         {return INCREMENT;}
 
 "=="|"!="|"<"|">"|"<="|">="                                  {yylval.sValue = strdup(yytext); return RELATIONAL;}
 
