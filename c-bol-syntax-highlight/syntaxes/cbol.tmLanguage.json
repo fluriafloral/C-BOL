@@ -1,0 +1,64 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "C-BOL",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#chars"
+		},
+		{
+			"include": "#numbers"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.cbol",
+					"match": "//.*\n$"
+				},
+				{
+					"name": "comment.multiline.cbol",
+					"begin": "/\\*",
+					"end": "\\*/"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.cbol",
+					"match": "\\b(LARGE|DEFINE|ENUM|END-ENUM|STRUCT|END-STRUCT|IF|THEN|ELIF|ELSE|END-IF|SWITCH|CASE|THRU|OTHER|END-SWITCH|WHILE|END-WHILE|FOR|END-FOR|DO|CALL|PROCEDURE|END-PROCEDURE|FUNCTION|END-FUNCTION|RETURN|BREAK|CONTINUE|TRY|END-TRY|CATCH|THROW|FINALLY|EXPECT|LAZY|LAZY-RIGHT|NOT|AND|AND-THEN|OR|OR-ELSE|XOR)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.cbol",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.cbol",
+					"match": "\\\\."
+				}
+			]
+		},
+		"chars": {
+			"name": "string.quoted.single.cbol",
+			"match": "'.'"
+		},
+		"numbers": {
+			"name": "constant.numeric.cbol",
+			"match": "\\b[0-9]+\\b"
+		}
+	},
+	"scopeName": "source.cbol"
+}

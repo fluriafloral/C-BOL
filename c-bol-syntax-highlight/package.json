@@ -1,0 +1,25 @@
+{
+  "name": "c-bol-syntax-highlight",
+  "displayName": "C-BOL Syntax Highlight",
+  "description": "C-BOL Syntax Highlight",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "cbol",
+      "aliases": ["C-BOL", "cbol"],
+      "extensions": [".cbol"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "cbol",
+      "scopeName": "source.cbol",
+      "path": "./syntaxes/cbol.tmLanguage.json"
+    }]
+  }
+}
