@@ -6,7 +6,7 @@ PROCEDURE swap(INTEGER p1, INTEGER p2)
     p2 = temp;
 END-PROCEDURE;
 
-INTEGER partition(INTEGER arr[], INTEGER low, INTEGER high)
+FUNCTION partition(INTEGER arr[], INTEGER low, INTEGER high)
     // choose the pivot
     INTEGER pivot = arr[high];
 
@@ -42,7 +42,7 @@ PROCEDURE quickSort(INTEGER arr[], INTEGER low, INTEGER high)
     END-IF;
 END-PROCEDURE;
 
-INTEGER main()
+FUNCTION main()
     INTEGER arr[6] = { 10, 7, 8, 9, 1, 5 };
     INTEGER n = sizeof(arr) / sizeof(arr[0]);
   

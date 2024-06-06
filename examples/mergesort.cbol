@@ -79,7 +79,7 @@ PROCEDURE printArray(INTEGER A[])
 END-PROCEDURE;
 
 // Driver code
-INTEGER main()
+FUNCTION main()
     INTEGER arr[6] = { 12, 11, 13, 5, 6, 7 };
     INTEGER arr_size = sizeof(arr) / sizeof(arr[0]);
 
