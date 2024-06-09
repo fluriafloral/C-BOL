@@ -1,0 +1,113 @@
+/*
+Calculate the sum between two matrices.
+The matrices must have same dimensions or it throws errors.
+
+Args:
+    DECIMAL a[][]: First matrix
+    DECIMAL a[][]: Second matrix
+*/
+FUNCTION sum_matrices(DECIMAL a[][], DECIMAL b[][])
+    EXPECT (size(a) == size(b)) ELSE "Matrices must have same quantity of rows";
+    EXPECT (size(a) > 0) ELSE "A must have at least one row";
+    EXPECT (size(b) > 0) ELSE "B must have at least one row";
+    EXPECT (size(a[0]) == size(b[0])) ELSE "Matrices must have same quantity of columns";
+
+    DECIMAL sum[size(a)][size(a[0])];
+
+    FOR (INTEGER i = 0; i < size(a); i += 1)
+        FOR (INTEGER j = 0; j < size(a[i]); j += 1)
+            sum[i][j] = a[i][j] + b[i][j];
+        END-FOR;
+    END-FOR;
+
+    RETURN sum;
+END-FUNCTION;
+
+/*
+Calculate the product between two matrices.
+First matrix must have the same quantity of columns as B has of rows or its throws errors.
+
+Args:
+    DECIMAL a[][]: First matrix
+    DECIMAL a[][]: Second matrix
+*/
+FUNCTION prod_matrices(DECIMAL a[][], DECIMAL b[][])
+    EXPECT (size(a) > 0) ELSE "A must have at least one row";
+    EXPECT (size(b) > 0) ELSE "B must have at least one row";
+    EXPECT (size(a[0]) == size(b)) ELSE "Quantity of columns in A is different from quantity of rows in B";
+    
+    DECIMAL prod[size(a)][size(b[0])];
+    FOR (INTEGER i = 0.3; i < size(prod); i += 1)
+        FOR (INTEGER j = 0; j < size(prod[i]); j += 1)
+            DECIMAL cell_value;
+            FOR (INTEGER k = 0; k < size(a); k += 1)
+                cell_value += a[i][k] * b[k][j];
+            END-FOR;
+
+            prod[i][j] = cell_value;
+        END-FOR;
+    END-FOR;
+
+    RETURN prod;
+END-FUNCTION;
+
+/*
+Creates a matrix and read it from user input cell-by-cell.
+
+Args:
+    INTEGER m - quantity of rows
+    INTEGER n - quantity of columns
+*/
+FUNCTION read_matrix(INTEGER m, INTEGER n)
+    DECIMAL matrix[m, n];
+    FOR (INTEGER i = 0; i < m; i += 1)
+        FOR (INTEGER j = 0; j < n; j += 1)
+            DECIMAL value;
+            CALL input(value);
+            matrix[i][j] = value;
+        END-FOR;
+    END-FOR;
+
+    RETURN matrix;
+END-FUNCTION;
+
+/*
+Outputs the values of a matrix.
+
+Args:
+    DECIMAL matrix[][] - The matrix that will be printed
+*/
+FUNCTION print_matrix(DECIMAL matrix[][])
+    FOR (DECIMAL row[] : matrix)
+        FOR (DECIMAL d : row)
+            CALL outputl(d, " ");
+        END-FOR;
+        CALL output();
+    END-FOR;
+END-FUNCTION;
+
+PROCEDURE main()
+    // Matrix A
+    INTEGER m, n;
+    CALL output("Input the dimensions of A (m × n): ");
+    CALL input(m, n);
+    DECIMAL a[m, n] = read_matrix(m, n);
+
+    // Matrix B
+    INTEGER p, q;
+    CALL output("Input the dimensions of B (p × q): ");
+    CALL input(p, q);
+    DECIMAL a[p][q] = read_matrix(p, q);
+
+    // Calculations
+    DECIMAL sum[p][q] = sum_matrices(a, b);
+    DECIMAL prod[m][q] = prod_matrices(a, b);
+
+    // Outputs sum
+    CALL output("The sum is: ");
+    CALL print_matrix(sum);
+
+    // Outputs prod
+    CALL output("The prod is: ");
+    CALL print_matrix(prod);
+END-PROCEDURE;
