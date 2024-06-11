@@ -1,0 +1,118 @@
+STRUCT rational_t
+    INTEGER numerator;
+    INTEGER denominator;
+END-STRUCT;
+
+ENUM Bool
+    true = 0,
+    false = 1
+END-ENUM;
+
+FUNCTION rational_maker(INTEGER a, INTEGER b)
+    EXPECT (b != 0) ELSE "Try again with any number different than 0";
+    rational_t x;
+    x.numerator = a;
+    x.denominator = b;
+    RETURN x;
+END-FUNCTION;
+
+FUNCTION rational_eq(rational_t x, rational_t y)
+    INTEGER u, v;
+    u = x.numerator * y.denominator;
+    v = x.denominator * y.numerator;
+    IF (u == v)
+        RETURN Bool.true;
+    ELSE
+        RETURN Bool.false;
+    END-IF;
+END-FUNCTION;
+
+FUNCTION rational_sum(rational_t x, rational_t y)
+    rational_t result;
+    IF (x.denominator == y.denominator)
+        result.numerator = x.numerator + y.numerator;
+        result.denominator = x.denominator;
+    ELSE
+        result.denominator = x.denominator * y.denominator;
+        result.numerator = (x.numerator * y.denominator) + (y.numerator * x.denominator);
+    END-IF;
+    RETURN result;
+END-FUNCTION;
+
+FUNCTION rational_neg(rational_t x)
+    IF (x.denominator > 0)
+        x.numerator = -(x.numerator);
+    ELSE
+        x.denominator = -(x.denominator);
+    END-IF;
+    RETURN x;
+END-FUNCTION;
+
+FUNCTION rational_sub(rational_t x, rational_t y)
+    RETURN rational_sum(x, rational_neg(y));
+END-FUNCTION;
+
+FUNCTION rational_mul(rational_t x, rational_t y)
+    rational_t result;
+    result.numerator = x.numerator * y.numerator;
+    result.denominator = x.denominator * y.denominator;
+    RETURN result;
+END-FUNCTION;
+
+FUNCTION rational_inv(rational_t x)
+    INTEGER copy;
+    copy = y.numerator;
+    y.numerator = y.denominator;
+    y.denominator = copy;
+    RETURN y;
+END-FUNCTION;
+
+FUNCTION rational_div(rational_t x, rational_t y)
+    RETURN rational_mul(x, rational_inv(y));
+END-FUNCTION;
+
+PROCEDURE print_rat(rational_t x)
+    CALL output("Numerator: ", x.numerator);
+    CALL output("Denominator: ", x.denominator);
+END-PROCEDURE;
+
+PROCEDURE main()
+    INTEGER a0, b0, a1, b1;
+    rational_t rat0, rat1;
+
+    CALL output("Input 4 integers: ");
+    CALL input(a0, b0, a1, b1);
+
+    rat0 = rational_maker(a0, b0);
+    rat1 = rational_maker(a1, b1);
+
+    CALL output("The rational numbers you got are: ");
+    CALL print_rat(rat0);
+    CALL print_rat(rat1);
+
+    IF (rational_eq(rat0, rat1) == Bool.true)
+        CALL output("These rational numbers are the same!");
+    ELSE
+        CALL output("These rational numbers are different!");
+    END-IF;
+
+    CALL output("Adding these two you get: ");
+    CALL print_rat(rational_sum(rat0, rat1));
+
+    CALL output("Subtracting these two you get: ");
+    CALL print_rat(rational_sub(rat0, rat1));
+
+    CALL output("Multiplying these two you get: ");
+    CALL print_rat(rational_mul(rat0, rat1));
+
+    CALL output("Dividing these two you get: ");
+    CALL print_rat(rational_div(rat0, rat1));
+
+    CALL output("Still interested into finding out their (+) and (*) inverses?");
+    CALL output("(+)-inv: ");
+    CALL print_rat(rational_neg(rat0));
+    CALL print_rat(rational_neg(rat1));
+    CALL output("(*)-inv: ");
+    CALL print_rat(rational_inv(rat0));
+    CALL print_rat(rational_inv(rat1));
+END-PROCEDURE;
