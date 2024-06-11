@@ -31,7 +31,7 @@ extern char * yytext;
 %token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
-%token '(' ')' '[' ']' '{' '}' ',' ':' '=' ';'
+%token '(' ')' '[' ']' '{' '}' ',' ':' '=' '.' ';'
 
 %start prog
 
@@ -260,6 +260,7 @@ exp_array_list : '{' exp_array_values '}'
 
 exp : exp_literal
     | ID
+    | ID '.' ID
     | ID '[' exp ']'
     | ID exp_func_args
     | exp_array_list
@@ -291,6 +292,7 @@ assign_op_stm : ID '+' '=' exp
 
 /// STMS
 assign : ID '=' exp
+       | ID '.' ID '=' exp
        | ID '[' exp ']' '=' exp
        ;
        

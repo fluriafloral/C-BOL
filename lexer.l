@@ -95,7 +95,7 @@
 ","                                                          {return yytext[0];}
 ":"                                                          {return yytext[0];}
 "="                                                          {return yytext[0];}
-
+"."                                                          {return yytext[0];}
 ";"                                                          {return yytext[0];}
 
 [a-zA-Z][a-zA-Z0-9_]*                                        {yylval.sValue = strdup(yytext); return ID;}
