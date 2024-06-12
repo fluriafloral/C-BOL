@@ -11,7 +11,7 @@ struct HashEntry
 
 unsigned long djb2_hash(unsigned char *str);
 int hash_function(char * key);
-void insert(char * key, char * value);
-char * retrieve(char * key);
+void insert_ht(char * key, char * value);
+char * retrieve_ht(char * key);
 
 #endif // HASHTB_H
