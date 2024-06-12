@@ -9,8 +9,8 @@ void freeRecord(record *r)
   {
     if (r->code != NULL)
       free(r->code);
-    if (r->opt1 != NULL)
-      free(r->opt1);
+    if (r->type != NULL)
+      free(r->type);
     free(r);
   }
 }
@@ -26,7 +26,7 @@ record *createRecord(char *c1, char *c2)
   }
 
   r->code = strdup(c1);
-  r->opt1 = strdup(c2);
+  r->type = strdup(c2);
 
   return r;
 }

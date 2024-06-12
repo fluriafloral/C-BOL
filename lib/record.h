@@ -4,7 +4,7 @@
 struct record
 {
 	char *code; /* field for storing the output code */
-	char *opt1; /* field for another purpose */
+	char *type; /* field for storing the type */
 };
 
 typedef struct record record;
