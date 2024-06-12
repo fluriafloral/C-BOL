@@ -1,12 +1,12 @@
 %{
 #include <stdio.h>
 #include "./lib/hashtable.h"
+#include "./lib/record.h"
 
 int yylex(void);
 int yyerror(char *s);
 extern int yylineno;
 extern char * yytext;
-
 %}
 
 %union {
