@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "./lib/hashtable.h"
 
 int yylex(void);
 int yyerror(char *s);
