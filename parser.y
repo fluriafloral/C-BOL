@@ -262,28 +262,28 @@ declar : type declar_vars {
 
 /// EXPRESSIONS
 exp_literal : UNIT {
-                $$ = createRecord("()", "void");
+                $$ = createRecord("()", "UNIT");
                 free($1);
           }
           | INTEGER {
-                $$ = createRecord("int", $1);
+                $$ = createRecord($1, "INTEGER");
                 free($1);
           }
           | REAL {
                 $1[strlen($1) - 1] = 'f';
-                $$ = createRecord("float", $1);
+                $$ = createRecord($1, "REAL");
                 free($1);
           }
           | DECIMAL {
-                $$ = createRecord("double", $1);
+                $$ = createRecord($1, "DECIMAL");
                 free($1);
           }
           | CHARACTER {
-                $$ = createRecord("char", $1);
+                $$ = createRecord($1, "CHARACTER");
                 free($1);
           }
           | TEXT {
-                $$ = createRecord("char *", $1);
+                $$ = createRecord($1, "TEXT");
                 free($1);
           }
           ;
