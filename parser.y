@@ -57,20 +57,20 @@ prog : stmlist {
 /// TYPES
 type : P_TYPE {
         if (strcmp($1, "UNIT") == 0) {
-            $$ = createRecord("void", $1);
+            $$ = createRecord("void ", $1);
         } else if (strcmp($1, "EMPTY") == 0) {
             yyerror("Whatahell?!");
             $$ = createRecord("", "");
         } else if (strcmp($1, "INTEGER") == 0) {
-            $$ = createRecord("int", $1);
+            $$ = createRecord("int ", $1);
         } else if (strcmp($1, "REAL") == 0) {
-            $$ = createRecord("float", $1);
+            $$ = createRecord("float ", $1);
         } else if (strcmp($1, "DECIMAL") == 0) {
-            $$ = createRecord("double", $1);
+            $$ = createRecord("double ", $1);
         } else if (strcmp($1, "CHARACTER") == 0) {
-            $$ = createRecord("char", $1);
+            $$ = createRecord("char ", $1);
         } else if (strcmp($1, "TEXT") == 0) {
-            $$ = createRecord("char *", $1);
+            $$ = createRecord("char * ", $1);
         }
         free($1);
      }
@@ -223,8 +223,8 @@ declar_array_dimensions :
 declar_var : ID
            | ID '=' exp {
                 char * s = cat($1, " = ", $3->code, "", "");
-                freeRecord($3);
                 $$ = createRecord(s, $3->type);
+                freeRecord($3);
                 free($1);
                 free(s);
            }
@@ -234,19 +234,21 @@ declar_var : ID
 
 declar_vars : declar_var {$$ = $1;}
             | declar_var ',' declar_vars {
-                char * s = cat($1->code, ",", $3->code, "", "");
+                // TODO: Check types
+                char * s = cat($1->code, ", ", $3->code, "", "");
+                $$ = createRecord(s, $1->type);
                 freeRecord($1);
                 freeRecord($3);
-                $$ = createRecord(s, $1->type);
                 free(s);
             }
             ;
 
 declar : type declar_vars {
+            // TODO: Check types
             char * s = cat($1->code, $2->code, "", "", "");
+            $$ = createRecord(s, "");
             freeRecord($1);
             freeRecord($2);
-            $$ = createRecord(s, "");
             free(s);
        }
        | CONST type ID '=' exp
@@ -383,15 +385,15 @@ stm : assign {}
 
 stmlist : stm ';' {
         char * s = cat($1->code, ";", "", "", "");
-        freeRecord($1);
         $$ = createRecord(s, "");
+        freeRecord($1);
         free(s);
     }
 	| stm ';' stmlist {
         char * s = cat($1->code, ";", $3->code, "", "");
+        $$ = createRecord(s, "");
         freeRecord($1);
         freeRecord($3);
-        $$ = createRecord(s, "");
         free(s);
     }
 	;
