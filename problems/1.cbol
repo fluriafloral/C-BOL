@@ -1,9 +1,8 @@
-PROCEDURE main()
+PROGRAM
     DECIMAL x = 10.0, y = 7.3;
     INTEGER c; // Initializes 0
     c = 10;
     
     DECIMAL result = x^2 - y + c;
-
-    CALL output(result);
-END-PROCEDURE;
+    OUTPUT result;
+END-PROGRAM;

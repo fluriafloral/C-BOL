@@ -30,6 +30,12 @@
 "END-STRUCT"                                                 {return END_STRUCT;}
 "CONST"                                                      {return CONST;}
 
+"OUTPUT"                                                     {return OUTPUT;}
+"INPUT"                                                      {return INPUT;}
+
+"PROGRAM"                                                    {return PROGRAM;}
+"END-PROGRAM"                                                {return END_PROGRAM;}
+
 "IF"                                                         {return IF;}
 "THEN"                                                       {return THEN;}
 "ELIF"                                                       {return ELIF;}
