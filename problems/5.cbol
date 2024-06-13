@@ -14,9 +14,11 @@ PROGRAM
     INTEGER n, m;
     INTEGER *r;
 
-    CALL input(n, m);
+    INPUT n;
+    INPUT m;
 
     CALL mdc(n, m, r);
 
-    CALL output("O mdc é: ", r);
+    OUTPUT "O mdc é: ";
+    OUTPUT r;
 END-PROGRAM;
