@@ -7,6 +7,9 @@
 
 int yylex(void);
 int yyerror(char *s);
+void already_declared_error(char *s);
+void undeclared_error(char *s);
+void type_error(char *t1, char*t2);
 extern int yylineno;
 extern char * yytext;
 extern FILE * yyin, * yyout;
@@ -223,10 +226,12 @@ declar_array_dimensions :
                         ;
 
 declar_var : ID {
+                already_declared_error($1);
                 $$ = createRecord($1, "");
                 free($1);
            }
            | ID '=' exp {
+                already_declared_error($1);
                 char * s = cat($1, " = ", $3->code, "", "");
                 $$ = createRecord(s, $3->type);
                 freeRecord($3);
@@ -239,7 +244,7 @@ declar_var : ID {
 
 declar_vars : declar_var {$$ = $1;}
             | declar_var ',' declar_vars {
-                // TODO: Check types
+                type_error($1->type, $3->type);
                 char * s = cat($1->code, ", ", $3->code, "", "");
                 $$ = createRecord(s, $1->type);
                 freeRecord($1);
@@ -249,7 +254,8 @@ declar_vars : declar_var {$$ = $1;}
             ;
 
 declar : type declar_vars {
-            // TODO: Check types
+            type_error($1->type, $2->type);
+            // TODO: For each ID, insert in HT with type
             char * s = cat($1->code, $2->code, "", "", "");
             $$ = createRecord(s, "");
             freeRecord($1);
@@ -394,7 +400,8 @@ assign_op_stm : ID '+' '=' exp
 
 /// STMS
 assign : ID '=' exp {
-            // TODO: Check if exists and correct type
+            undeclared_error($1);
+            type_error(retrieve_ht($1), $3->type);
             char * s = cat($1, " = ", $3->code, "", "");
             $$ = createRecord(s, "");
             freeRecord($3);
@@ -472,6 +479,26 @@ int main(int argc, char ** argv) {
 int yyerror (char *msg) {
 	fprintf (stderr, "%d: %s at '%s'\n", yylineno, msg, yytext);
 	return 0;
+}
+
+void undeclared_error(char * s) {
+    if (!retrieve_ht(s)) {
+        char * out = cat(s, " undeclared!", "", "", "");
+        yyerror(out);
+    }
+}
+
+void already_declared_error(char * s) {
+    if (retrieve_ht(s)) {
+        char * out = cat(s, " already declared!", "", "", "");
+        yyerror(out);
+    }
+}
+
+void type_error(char * t1, char * t2) {
+    if (strcmp(t1, t2) != 0 && !(strcmp(t1, "") == 0 || strcmp(t2, "") == 0)) {
+        yyerror("Type error!");
+    }
 }
 
 char * cat(char * s1, char * s2, char * s3, char * s4, char * s5) {
