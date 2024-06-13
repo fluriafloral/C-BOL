@@ -1,8 +1,8 @@
-PROCEDURE main()
+PROGRAM
     DECIMAL n = 0;
     INTEGER a, b, c, d;
     WHILE (n >= 0)
-        CALL input(n);
+        INPUT n;
         SWITCH (n)
             CASE 0 THRU 25:
                 a += 1;
@@ -19,8 +19,12 @@ PROCEDURE main()
         END-SWITCH;
     END-WHILE;
 
-    CALL output("Between [0, 25]: ", a);
-    CALL output("Between [26, 50]: ", b);
-    CALL output("Between [51, 75]: ", c);
-    CALL output("Between [76, 100]: ", d);
-END-PROCEDURE;
+    OUTPUT "Between [0, 25]: ";
+    OUTPUT a;
+    OUTPUT "Between [26, 50]: ";
+    OUTPUT b;
+    OUTPUT "Between [51, 75]: ";
+    OUTPUT c;
+    OUTPUT "Between [76, 100]: ";
+    OUTPUT d;
+END-PROGRAM;

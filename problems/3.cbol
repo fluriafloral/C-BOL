@@ -63,7 +63,7 @@ FUNCTION read_matrix(INTEGER m, INTEGER n)
     FOR (INTEGER i = 0; i < m; i += 1)
         FOR (INTEGER j = 0; j < n; j += 1)
             DECIMAL value;
-            CALL input(value);
+            INPUT value;
             matrix[i][j] = value;
         END-FOR;
     END-FOR;
@@ -80,23 +80,26 @@ Args:
 FUNCTION print_matrix(DECIMAL matrix[][])
     FOR (DECIMAL row[] : matrix)
         FOR (DECIMAL d : row)
-            CALL outputl(d, " ");
+            OUTPUT d;
+            OUTPUT " ";
         END-FOR;
-        CALL output();
+        OUTPUT "\n";
     END-FOR;
 END-FUNCTION;
 
-PROCEDURE main()
+PROGRAM
     // Matrix A
     INTEGER m, n;
-    CALL output("Input the dimensions of A (m × n): ");
-    CALL input(m, n);
+    OUTPUT "Input the dimensions of A (m × n): ";
+    INPUT m;
+    INPUT n;
     DECIMAL a[m, n] = read_matrix(m, n);
 
     // Matrix B
     INTEGER p, q;
-    CALL output("Input the dimensions of B (p × q): ");
-    CALL input(p, q);
+    OUTPUT "Input the dimensions of B (p × q): ";
+    INPUT p;
+    INPUT q;
     DECIMAL a[p][q] = read_matrix(p, q);
 
     // Calculations
@@ -104,10 +107,10 @@ PROCEDURE main()
     DECIMAL prod[m][q] = prod_matrices(a, b);
 
     // Outputs sum
-    CALL output("The sum is: ");
+    OUTPUT "The sum is: ";
     CALL print_matrix(sum);
 
     // Outputs prod
-    CALL output("The prod is: ");
+    OUTPUT "The prod is: ";
     CALL print_matrix(prod);
-END-PROCEDURE;
+END-PROGRAM;

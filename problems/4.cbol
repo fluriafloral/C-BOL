@@ -72,47 +72,52 @@ FUNCTION rational_div(rational_t x, rational_t y)
 END-FUNCTION;
 
 PROCEDURE print_rat(rational_t x)
-    CALL output("Numerator: ", x.numerator);
-    CALL output("Denominator: ", x.denominator);
+    OUTPUT "Numerator: "
+    OUTPUT x.numerator;
+    OUTPUT "Denominator: "
+    OUTPUT x.denominator;
 END-PROCEDURE;
 
-PROCEDURE main()
+PROGRAM
     INTEGER a0, b0, a1, b1;
     rational_t rat0, rat1;
 
-    CALL output("Input 4 integers: ");
-    CALL input(a0, b0, a1, b1);
+    OUTPUT "Input 4 integers: ";
+    INPUT a0;
+    INPUT b0;
+    INPUT a1;
+    INPUT b1;
 
     rat0 = rational_maker(a0, b0);
     rat1 = rational_maker(a1, b1);
 
-    CALL output("The rational numbers you got are: ");
+    OUTPUT "The rational numbers you got are: ";
     CALL print_rat(rat0);
     CALL print_rat(rat1);
 
     IF (rational_eq(rat0, rat1) == Bool.true)
-        CALL output("These rational numbers are the same!");
+        OUTPUT "These rational numbers are the same!";
     ELSE
-        CALL output("These rational numbers are different!");
+        OUTPUT "These rational numbers are different!";
     END-IF;
 
-    CALL output("Adding these two you get: ");
+    OUTPUT "Adding these two you get: ";
     CALL print_rat(rational_sum(rat0, rat1));
 
-    CALL output("Subtracting these two you get: ");
+    OUTPUT "Subtracting these two you get: ";
     CALL print_rat(rational_sub(rat0, rat1));
 
-    CALL output("Multiplying these two you get: ");
+    OUTPUT "Multiplying these two you get: ";
     CALL print_rat(rational_mul(rat0, rat1));
 
-    CALL output("Dividing these two you get: ");
+    OUTPUT "Dividing these two you get: ";
     CALL print_rat(rational_div(rat0, rat1));
 
-    CALL output("Still interested into finding out their (+) and (*) inverses?");
-    CALL output("(+)-inv: ");
+    OUTPUT "Still interested into finding out their (+) and (*) inverses?";
+    OUTPUT "(+)-inv: ";
     CALL print_rat(rational_neg(rat0));
     CALL print_rat(rational_neg(rat1));
-    CALL output("(*)-inv: ");
+    OUTPUT "(*)-inv: ";
     CALL print_rat(rational_inv(rat0));
     CALL print_rat(rational_inv(rat1));
-END-PROCEDURE;
+END-PROGRAM;
