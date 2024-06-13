@@ -31,6 +31,8 @@ char * cat(char *, char *, char *, char *, char *);
 %token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
 %token '(' ')' '[' ']' '{' '}' ',' ':' '=' '.' ';'
+%token OUTPUT INPUT
+%token PROGRAM END_PROGRAM
 
 %start prog
 
@@ -45,32 +47,32 @@ char * cat(char *, char *, char *, char *, char *);
 %left '*' '/' '%'
 %right '^'
 
-%type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type
+%type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
 
 %%
-prog : stmlist {
-        fprintf(yyout, "%s\n", $1->code);
-        freeRecord($1);
+prog : PROGRAM stmlist END_PROGRAM ';' {
+        fprintf(yyout, "int main() {\n%s\nreturn 0;\n}\n", $2->code);
+        freeRecord($2);
      }
      ;
 
 /// TYPES
 type : P_TYPE {
         if (strcmp($1, "UNIT") == 0) {
-            $$ = createRecord("void", $1);
+            $$ = createRecord("void ", $1);
         } else if (strcmp($1, "EMPTY") == 0) {
             yyerror("Whatahell?!");
             $$ = createRecord("", "");
         } else if (strcmp($1, "INTEGER") == 0) {
-            $$ = createRecord("int", $1);
+            $$ = createRecord("int ", $1);
         } else if (strcmp($1, "REAL") == 0) {
-            $$ = createRecord("float", $1);
+            $$ = createRecord("float ", $1);
         } else if (strcmp($1, "DECIMAL") == 0) {
-            $$ = createRecord("double", $1);
+            $$ = createRecord("double ", $1);
         } else if (strcmp($1, "CHARACTER") == 0) {
-            $$ = createRecord("char", $1);
+            $$ = createRecord("char ", $1);
         } else if (strcmp($1, "TEXT") == 0) {
-            $$ = createRecord("char *", $1);
+            $$ = createRecord("char * ", $1);
         }
         free($1);
      }
@@ -220,11 +222,14 @@ declar_array_dimensions :
                         | '[' exp ']' declar_array_dimensions
                         ;
 
-declar_var : ID
+declar_var : ID {
+                $$ = createRecord($1, "");
+                free($1);
+           }
            | ID '=' exp {
                 char * s = cat($1, " = ", $3->code, "", "");
-                freeRecord($3);
                 $$ = createRecord(s, $3->type);
+                freeRecord($3);
                 free($1);
                 free(s);
            }
@@ -234,19 +239,21 @@ declar_var : ID
 
 declar_vars : declar_var {$$ = $1;}
             | declar_var ',' declar_vars {
-                char * s = cat($1->code, ",", $3->code, "", "");
+                // TODO: Check types
+                char * s = cat($1->code, ", ", $3->code, "", "");
+                $$ = createRecord(s, $1->type);
                 freeRecord($1);
                 freeRecord($3);
-                $$ = createRecord(s, $1->type);
                 free(s);
             }
             ;
 
 declar : type declar_vars {
+            // TODO: Check types
             char * s = cat($1->code, $2->code, "", "", "");
+            $$ = createRecord(s, "");
             freeRecord($1);
             freeRecord($2);
-            $$ = createRecord(s, "");
             free(s);
        }
        | CONST type ID '=' exp
@@ -297,12 +304,33 @@ exp_logic : exp RELATIONAL exp
           | NOT exp
           ;
 
-exp_arith : exp '+' exp
-          | exp '-' exp
+exp_arith : exp '+' exp {
+                char * s = cat($1->code, " + ", $3->code, "", "");
+                // TODO: Typewise
+                $$ = createRecord(s, $1->type);
+                freeRecord($1);
+                freeRecord($3);
+                free(s);
+          }
+          | exp '-' exp {
+                char * s = cat($1->code, " - ", $3->code, "", "");
+                // TODO: Typewise
+                $$ = createRecord(s, $1->type);
+                freeRecord($1);
+                freeRecord($3);
+                free(s);
+          }
           | exp '*' exp
           | exp '/' exp
           | exp '%' exp
-          | exp '^' exp
+          | exp '^' exp {
+                char * s = cat("pow(", $1->code, ", ", $3->code, ")");
+                // TODO: Typewise
+                $$ = createRecord(s, $1->type);
+                freeRecord($1);
+                freeRecord($3);
+                free(s);
+          }
           ;
 
 exp_lazy : LAZY
@@ -325,7 +353,10 @@ exp_array_list : '{' exp_array_values '}'
                ;
 
 exp : exp_literal {$$ = $1;}
-    | ID
+    | ID {
+        $$ = createRecord($1, "");
+        free($1);
+    }
     | ID '.' ID
     | ID '[' exp ']'
     | ID exp_func_args
@@ -334,7 +365,12 @@ exp : exp_literal {$$ = $1;}
     | exp_arith
     | exp_lazy '(' exp_arith ')'
     | '(' exp ')'
-    | '-' exp
+    | '-' exp {
+        char * s = cat("-", $2->code, "", "", "");
+        $$ = createRecord(s, "");
+        freeRecord($2);
+        free(s);
+    }
     ;
 /// END-EXPRESSIONS
 
@@ -357,12 +393,19 @@ assign_op_stm : ID '+' '=' exp
 
 
 /// STMS
-assign : ID '=' exp
+assign : ID '=' exp {
+            // TODO: Check if exists and correct type
+            char * s = cat($1, " = ", $3->code, "", "");
+            $$ = createRecord(s, "");
+            freeRecord($3);
+            free($1);
+            free(s);
+       }
        | ID '.' ID '=' exp
        | ID '[' exp ']' '=' exp
        ;
        
-stm : assign {}
+stm : assign {$$ = $1;}
     | if_stmts {}
     | switch_stmts {}
     | while_stmts {}
@@ -379,19 +422,27 @@ stm : assign {}
     | THROW exp {}
     | RETURN exp {}
     | assign_op_stm {}
+    | INPUT ID {}
+    | OUTPUT exp {
+        // TODO: %s? %d? %f? %c?
+        char * s = cat("printf(\"\%s\\n\", ", $2->code, ")", "", "");
+        $$ = createRecord(s, $2->code);
+        freeRecord($2);
+        free(s);
+    }
     ;
 
 stmlist : stm ';' {
-        char * s = cat($1->code, ";", "", "", "");
-        freeRecord($1);
+        char * s = cat($1->code, ";\n", "", "", "");
         $$ = createRecord(s, "");
+        freeRecord($1);
         free(s);
     }
 	| stm ';' stmlist {
-        char * s = cat($1->code, ";", $3->code, "", "");
+        char * s = cat($1->code, ";\n", $3->code, "", "");
+        $$ = createRecord(s, "");
         freeRecord($1);
         freeRecord($3);
-        $$ = createRecord(s, "");
         free(s);
     }
 	;
