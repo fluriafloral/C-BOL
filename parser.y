@@ -54,7 +54,8 @@ char * cat(char *, char *, char *, char *, char *);
 
 %%
 prog : PROGRAM stmlist END_PROGRAM ';' {
-        fprintf(yyout, "int main() {\n%s\nreturn 0;\n}\n", $2->code);
+        char * includes = "#include <stdio.h>\n#include <math.h>\n";
+        fprintf(yyout, "%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $2->code);
         freeRecord($2);
      }
      ;
