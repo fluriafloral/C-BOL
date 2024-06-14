@@ -481,6 +481,8 @@ int main(int argc, char ** argv) {
     fclose(yyin);
     fclose(yyout);
 
+    free_ht();
+
 	return codigo;
 }
 
@@ -505,7 +507,9 @@ void already_declared_error(char * s) {
 
 void type_error(char * t1, char * t2) {
     if (strcmp(t1, t2) != 0 && !(strcmp(t1, "") == 0 || strcmp(t2, "") == 0)) {
-        yyerror("Type error!");
+        char * s = cat("[Type error] ", t1, " and ", t2, " are incompatible.");
+        yyerror(s);
+        free(s);
     }
 }
 
