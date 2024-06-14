@@ -441,8 +441,16 @@ stm : assign {$$ = $1;}
     | assign_op_stm {}
     | INPUT ID {}
     | OUTPUT exp {
-        // TODO: %s? %d? %f? %c?
-        char * s = cat("printf(\"\%s\\n\", ", $2->code, ")", "", "");
+        char * markup = "\%s";
+
+        if (strcmp($2->type, "INTEGER") == 0) {
+            markup = "\%d";
+        } else if (strcmp($2->type, "CHARACTER") == 0) {
+            markup = "\%c";
+        } else if (strcmp($2->type, "REAL") == 0 || strcmp($2->type, "DECIMAL") == 0) {
+            markup = "\%.2f";
+        }
+        char * s = cat("printf(\"", markup ,"\\n\", ", $2->code, ")");
         $$ = createRecord(s, $2->code, "");
         freeRecord($2);
         free(s);
