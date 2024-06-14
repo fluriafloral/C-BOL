@@ -4,7 +4,6 @@
 #include <string.h>
 #include "./lib/hashtable.h"
 #include "./lib/record.h"
-#include "./lib/strsplit.h"
 
 int yylex(void);
 int yyerror(char *s);
@@ -258,15 +257,11 @@ declar_vars : declar_var {$$ = $1;}
 
 declar : type declar_vars {
             type_error($1->type, $2->type);
-            char ** ids = strsplit($2->opt1, ",");
-            int i = 0;
-            char * id = "";
+            char *id;
+            id = strtok($2->opt1, ",");
             while (id != NULL) {
-                if (strlen(id)) {
-                    insert_ht(id, $1->type);
-                }
-                id = ids[i];
-                ++i;
+                insert_ht(id, $1->type);
+                id = strtok(NULL, ",");
             }
             char * s = cat($1->code, $2->code, "", "", "");
             $$ = createRecord(s, "", "");
