@@ -1,7 +1,7 @@
 all: compiler
 
 compiler: lex.yy.c y.tab.c 
-	gcc lex.yy.c y.tab.c ./lib/hashtable.c ./lib/record.c ./lib/strsplit.c -o compiler
+	gcc lex.yy.c y.tab.c ./lib/hashtable.c ./lib/record.c -o compiler
 
 lex.yy.c: lexer.l
 	lex lexer.l
