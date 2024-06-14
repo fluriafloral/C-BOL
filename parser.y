@@ -369,7 +369,8 @@ exp_array_list : '{' exp_array_values '}'
 
 exp : exp_literal {$$ = $1;}
     | ID {
-        $$ = createRecord($1, "", "");
+        undeclared_error($1);
+        $$ = createRecord($1, retrieve_ht($1), "");
         free($1);
     }
     | ID '.' ID
