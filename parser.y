@@ -164,7 +164,13 @@ switch_stmts : SWITCH exp switch_case END_SWITCH {
 /// LOOPS
 
 while_stmts : WHILE exp stmlist END_WHILE {
-                char * s = cat("while (", $2->code, ") {\n", $3->code, "\n}");
+                unsigned long loop_id = (unsigned long) &$2;
+                char loop_id_str[21];
+
+                snprintf(loop_id_str, sizeof(loop_id_str), "%lu", loop_id);
+
+                char * s = cat("while", loop_id_str, ":\n", $3->code, "\nif(");
+                s = cat(s, $2->code, ")\ngoto while", loop_id_str, "");
                 $$ = createRecord(s, "", "");
                 freeRecord($2);
                 freeRecord($3);
