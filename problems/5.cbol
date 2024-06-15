@@ -1,23 +1,23 @@
-PROCEDURE mdc(INTEGER n, INTEGER m, INTEGER &r)
+PROCEDURE mdc(INTEGER n, INTEGER m, INTEGER *r)
     IF (m % n == 0)
-        r = n;
+        *r = n;
     ELIF (n % m == 0)
-        r = m;
+        *r = m;
     ELIF (m > n)
-        r = mdc(n, m % n, r);
+        mdc(n, m % n, r);
     ELSE
-        r = mdc(m, n % m, r);
+        mdc(m, n % m, r);
     END-IF;
 END-PROCEDURE;
 
 PROGRAM
     INTEGER n, m;
-    INTEGER *r;
+    INTEGER r;
 
     INPUT n;
     INPUT m;
 
-    CALL mdc(n, m, r);
+    CALL mdc(n, m, &r);
 
     OUTPUT "O mdc é: ";
     OUTPUT r;
