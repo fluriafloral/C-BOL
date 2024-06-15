@@ -1,20 +1,20 @@
 PROGRAM
-    DECIMAL n = 0;
+    INTEGER n = 0;
     INTEGER a, b, c, d;
     WHILE (n >= 0)
         INPUT n;
         SWITCH (n)
             CASE 0 THRU 25:
-                a += 1;
+                a = a + 1;
                 BREAK;
             CASE 26 THRU 50:
-                b += 1;
+                b = b + 1;
                 BREAK;
             CASE 51 THRU 75:
-                c += 1;
+                c = c + 1;
                 BREAK;
             CASE 76 THRU 100:
-                d += 1;
+                d = d + 1;
                 BREAK;
         END-SWITCH;
     END-WHILE;

@@ -50,7 +50,7 @@ char * cat(char *, char *, char *, char *, char *);
 %left '*' '/' '%'
 %right '^'
 
-%type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
+%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
 
 %%
 prog : PROGRAM stmlist END_PROGRAM ';' {
@@ -108,18 +108,51 @@ if_else : ELSE stmlist
 if_stmts : IF exp stmlist if_elifs if_else END_IF
          ;
 
-switch_case_optional : stmlist
-                     |
+switch_case_optional : stmlist {$$ = $1;}
+                     | {$$ = createRecord("", "", "");}
                      ;
+
+switch_case_thru : CASE exp THRU exp ':' switch_case_optional {
+                    // TODO: exps integers
+                    char * s = cat("case ", $2->code, ":", "", "");
+                    char i_str[12] = "";
+                    int begin = atoi($2->code);
+                    int end = atoi($4->code);
+                    int i = begin + 1;
+                    while(i <= end) {
+                        sprintf(i_str, "%d", i);
+                        s = cat(s, "\ncase ", i_str, ":", "");
+                        ++i;
+                    }
+                    s = cat(s, "\n", $6->code, "", "");
+                    $$ = createRecord(s, "", "");
+                    freeRecord($2);
+                    freeRecord($4);
+                    freeRecord($6);
+                    free(s);
+                 }
+                 ;
 
 switch_case : CASE exp ':' switch_case_optional
             | CASE exp ':' switch_case_optional switch_case
-            | CASE exp THRU exp ':' switch_case_optional
-            | CASE exp THRU exp ':' switch_case_optional switch_case
+            | switch_case_thru {$$ = $1;}
+            | switch_case_thru switch_case {
+                char * s = cat($1->code, $2->code, "", "", "");
+                $$ = createRecord(s, "", "");
+                freeRecord($1);
+                freeRecord($2);
+                free(s);
+            }
             | CASE OTHER ':' stmlist
             ;
         
-switch_stmts : SWITCH exp switch_case END_SWITCH
+switch_stmts : SWITCH exp switch_case END_SWITCH {
+                char * s = cat("switch (", $2->code, ") {\n", $3->code, "\n}");
+                $$ = createRecord(s, "", "");
+                freeRecord($2);
+                freeRecord($3);
+                free(s);
+             }
              ;
 
 /// END-CONDITIONALS
@@ -130,7 +163,13 @@ switch_stmts : SWITCH exp switch_case END_SWITCH
 
 /// LOOPS
 
-while_stmts : WHILE exp stmlist END_WHILE
+while_stmts : WHILE exp stmlist END_WHILE {
+                char * s = cat("while (", $2->code, ") {\n", $3->code, "\n}");
+                $$ = createRecord(s, "", "");
+                freeRecord($2);
+                freeRecord($3);
+                free(s);
+            }
             ;
 
 for_var_init : type assign
@@ -310,7 +349,14 @@ exp_literal : UNIT {
           }
           ;
 
-exp_logic : exp RELATIONAL exp
+exp_logic : exp RELATIONAL exp {
+            char * s = cat($1->code, $2, $3->code, "", "");
+            $$ = createRecord(s, "", "");
+            freeRecord($1);
+            freeRecord($3);
+            free($2);
+            free(s);
+          }
           | exp AND exp
           | exp AND_THEN exp
           | exp OR exp
@@ -377,10 +423,15 @@ exp : exp_literal {$$ = $1;}
     | ID '[' exp ']'
     | ID exp_func_args
     | exp_array_list
-    | exp_logic
+    | exp_logic {$$ = $1;}
     | exp_arith
     | exp_lazy '(' exp_arith ')'
-    | '(' exp ')'
+    | '(' exp ')' {
+        char * s = cat("(", $2->code, ")", "", "");
+        $$ = createRecord(s, $2->type, "");
+        freeRecord($2);
+        free(s);
+    }
     | '-' exp {
         char * s = cat("-", $2->code, "", "", "");
         $$ = createRecord(s, "", "");
@@ -424,8 +475,8 @@ assign : ID '=' exp {
        
 stm : assign {$$ = $1;}
     | if_stmts {}
-    | switch_stmts {}
-    | while_stmts {}
+    | switch_stmts {$$ = $1;}
+    | while_stmts {$$ = $1;}
     | for_stm {}
     | do_stm {}
     | declar {$$ = $1;}
@@ -435,11 +486,35 @@ stm : assign {$$ = $1;}
     | func_stm {}
     | CALL ID exp_func_args {}
     | CONTINUE {}
-    | BREAK {}
+    | BREAK {$$ = createRecord("break", "", "");}
     | THROW exp {}
     | RETURN exp {}
     | assign_op_stm {}
-    | INPUT ID {}
+    | INPUT ID {
+        undeclared_error($2);
+        char * markup = "\%s";
+        char * prefix_input = "&";
+        char * _type = retrieve_ht($2);
+
+        if (strcmp(_type, "TEXT") == 0) {
+            prefix_input = "";
+        } else if (strcmp(_type, "INTEGER") == 0) {
+            markup = "\%d";
+        } else if (strcmp(_type, "CHARACTER") == 0) {
+            markup = "\%c";
+        } else if (strcmp(_type, "REAL") == 0) {
+            markup = "\%f";
+        } else if (strcmp(_type, "DECIMAL") == 0) {
+            markup = "\%lf";
+        }
+
+        char * s1 = cat("scanf(\"", markup, "\", ", prefix_input, $2);
+        char * s = cat(s1, ")", "", "", "");
+        $$ = createRecord(s, "", "");
+        free($2);
+        free(s1);
+        free(s);
+    }
     | OUTPUT exp {
         char * markup = "\%s";
 
