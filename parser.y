@@ -50,16 +50,26 @@ char * cat(char *, char *, char *, char *, char *);
 %left '*' '/' '%'
 %right '^'
 
-%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts 
+%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm 
 %type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
 
 %%
-prog : PROGRAM stmlist END_PROGRAM ';' {
+prog : funcs_and_procs PROGRAM stmlist END_PROGRAM ';' {
         char * includes = "#include <stdio.h>\n#include <math.h>\n";
-        fprintf(yyout, "%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $2->code);
-        freeRecord($2);
+        fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $1->code, $3->code);
+        freeRecord($1);
+        freeRecord($3);
      }
      ;
+
+funcs_and_procs : func_stm funcs_and_procs {
+                    char * s = cat();
+                }
+                | proc_stm funcs_and_procs {
+                    char * s = cat();
+                }
+                |
+                ;
 
 /// TYPES
 type : P_TYPE {
@@ -230,7 +240,16 @@ proc_params : '(' proc_args ')'
             | UNIT
             ;
 
-proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE
+proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
+            already_declared_error($2);
+            char * s = cat("void ", $2, $3->code, "{\n", $4->code);
+            s = cat(s, "}\n", "", "", "");
+            $$ = createRecord(s, "", "");
+            freeRecord($3);
+            freeRecord($4);
+            free($2);
+            free(s);
+         }
          ;
 /// END-PROCEDURE
 
@@ -288,7 +307,13 @@ declar_var : ID {
                 free($1);
                 free(s);
            }
-           | '@' ID
+           | '@' ID {
+                already_declared_error($2);
+                char * s = cat("*", $2, "", "", "");
+                $$ = createRecord(s, "", s);
+                free($2);
+                free(s);
+           }
            | ID '[' exp ']' declar_array_dimensions
            | ID '[' exp ']' declar_array_dimensions '=' exp
            ;
@@ -311,7 +336,14 @@ declar : type declar_vars {
             char *id;
             id = strtok($2->opt1, ",");
             while (id != NULL) {
-                insert_ht(id, $1->type);
+                if (id[0] == '*'){
+                    id = strtok(id, "*");
+                    char * s = cat($1->type, " @", "", "", "");
+                    insert_ht(id, s);
+                }
+                else {
+                    insert_ht(id, $1->type);
+                }
                 id = strtok(NULL, ",");
             }
             char * s = cat($1->code, $2->code, "", "", "");
