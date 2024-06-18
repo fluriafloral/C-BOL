@@ -27,7 +27,7 @@ char * cat(char *, char *, char *, char *, char *);
 %token IF THEN ELIF ELSE END_IF
 %token SWITCH CASE THRU OTHER END_SWITCH
 %token WHILE END_WHILE FOR END_FOR DO
-%token CALL PROCEDURE END_PROCEDURE FUNCTION END_FUNCTION
+%token CALL PROCEDURE END_PROCEDURE END_FUNCTION
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY LAZY_RIGHT
@@ -50,8 +50,8 @@ char * cat(char *, char *, char *, char *, char *);
 %left '*' '/' '%'
 %right '^'
 
-%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm 
-%type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
+%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
+%type <rec> funcs_and_procs stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
 
 %%
 prog : funcs_and_procs PROGRAM stmlist END_PROGRAM ';' {
@@ -62,11 +62,15 @@ prog : funcs_and_procs PROGRAM stmlist END_PROGRAM ';' {
      }
      ;
 
-funcs_and_procs : func_stm funcs_and_procs {
-                    char * s = cat();
+funcs_and_procs : func_stm ';' funcs_and_procs {
+                    //char * s = cat();
                 }
-                | proc_stm funcs_and_procs {
-                    char * s = cat();
+                | proc_stm ';' funcs_and_procs {
+                    char * s = cat($1->code, $3->code, "", "", "");
+                    $$ = createRecord(s, "", "");
+                    freeRecord($1);
+                    freeRecord($3);
+                    free(s);
                 }
                 |
                 ;
@@ -227,27 +231,59 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 /// PROCEDURE
-proc_args : type ID
-          | type '@' ID
-          | type '@' ID ',' proc_args
-          | type ID ',' proc_args
-          | type ID '[' ']'
-          | type ID '[' ']' ',' proc_args
+proc_arg_typado : type ID {
+                    char * s = cat($1->code, $2, "", "", "");
+                    char * opt = cat($1->type, "#", $2, "", "");
+                    $$ = createRecord(s, $1->type, opt);
+                    freeRecord($1);
+                    free($2);
+                    free(s);
+                    free(opt);
+                }
+                | type '@' ID 
+                | type ID '[' ']'
+                ;
+
+proc_args : proc_arg_typado {$$ = $1;}
+          | proc_arg_typado ',' proc_args {
+                char * s = cat($1->code, ", " , $3->code, "", "");
+                char * opts = cat($1->opt1, ",", $3->opt1, "", "");
+                $$ = createRecord(s, "", opts);
+                freeRecord($1);
+                freeRecord($3);
+                free(s);
+                free(opts);
+          }
           | type assign
           ;
           
-proc_params : '(' proc_args ')'
-            | UNIT
+proc_params : '(' proc_args ')' {
+                char * s = cat("(", $2->code, ")", "", "");
+                $$ = createRecord(s, "", $2->opt1);
+                freeRecord($2);
+                free(s);
+            }
+            | UNIT {
+                $$ = createRecord("()", "", "");
+            }
             ;
 
 proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
             already_declared_error($2);
+            char * argt;
+            argt = strtok($3->opt1, ",");
+            while (argt != NULL) {
+                printf("%s\n", argt);
+                //insert_ht(arg, $1->type);
+                argt = strtok(NULL, ",");
+            }
             char * s = cat("void ", $2, $3->code, "{\n", $4->code);
             s = cat(s, "}\n", "", "", "");
             $$ = createRecord(s, "", "");
             freeRecord($3);
             freeRecord($4);
             free($2);
+            free(argt);
             free(s);
          }
          ;
@@ -258,7 +294,7 @@ proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
 
 
 /// FUNCTIONS
-func_stm : FUNCTION ID proc_params stmlist END_FUNCTION
+func_stm : type ID proc_params stmlist END_FUNCTION
          ;
 /// END-FUNCTIONS
 
