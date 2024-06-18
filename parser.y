@@ -33,7 +33,7 @@ char * cat(char *, char *, char *, char *, char *);
 %token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
-%token '(' ')' '[' ']' '{' '}' ',' ':' '=' '.' ';'
+%token '(' ')' '[' ']' '{' '}' ',' ':' '=' '@' '&' '.' ';'
 %token OUTPUT INPUT
 %token PROGRAM END_PROGRAM
 
@@ -50,7 +50,8 @@ char * cat(char *, char *, char *, char *, char *);
 %left '*' '/' '%'
 %right '^'
 
-%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
+%type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts 
+%type <rec> stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
 
 %%
 prog : PROGRAM stmlist END_PROGRAM ';' {
@@ -217,6 +218,8 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 /// PROCEDURE
 proc_args : type ID
+          | type '@' ID
+          | type '@' ID ',' proc_args
           | type ID ',' proc_args
           | type ID '[' ']'
           | type ID '[' ']' ',' proc_args
@@ -246,7 +249,8 @@ func_stm : FUNCTION ID proc_params stmlist END_FUNCTION
 
 /// DECLARATIONS
 declar_struct_field : type ID 
-                    | type ID '[' exp ']' 
+                    | type '@' ID
+                    | type ID '[' exp ']'
                     ;
 
 declar_struct_fields : declar_struct_field ';'
@@ -284,6 +288,7 @@ declar_var : ID {
                 free($1);
                 free(s);
            }
+           | '@' ID
            | ID '[' exp ']' declar_array_dimensions
            | ID '[' exp ']' declar_array_dimensions '=' exp
            ;
@@ -427,6 +432,7 @@ exp : exp_literal {$$ = $1;}
     }
     | ID '.' ID
     | ID '[' exp ']'
+    | '@' ID
     | ID exp_func_args
     | exp_array_list
     | exp_logic {$$ = $1;}
@@ -477,6 +483,7 @@ assign : ID '=' exp {
        }
        | ID '.' ID '=' exp
        | ID '[' exp ']' '=' exp
+       | '@' ID '=' exp
        ;
        
 stm : assign {$$ = $1;}

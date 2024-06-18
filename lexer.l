@@ -40,7 +40,7 @@
 "THEN"                                                       {return THEN;}
 "ELIF"                                                       {return ELIF;}
 "ELSE"                                                       {return ELSE;}
-"END-IF"                                                      {return END_IF;}
+"END-IF"                                                     {return END_IF;}
 
 "SWITCH"                                                     {return SWITCH;}
 "CASE"                                                       {return CASE;}
@@ -101,6 +101,8 @@
 ","                                                          {return yytext[0];}
 ":"                                                          {return yytext[0];}
 "="                                                          {return yytext[0];}
+"@"                                                          {return yytext[0];}
+"&"                                                          {return yytext[0];}
 "."                                                          {return yytext[0];}
 ";"                                                          {return yytext[0];}
 
