@@ -8,7 +8,7 @@ ENUM Bool
     false = 1
 END-ENUM;
 
-FUNCTION rational_maker(INTEGER a, INTEGER b)
+rational_t rational_maker(INTEGER a, INTEGER b)
     EXPECT (b != 0) ELSE "Try again with any number different than 0";
     rational_t x;
     x.numerator = a;
@@ -16,7 +16,7 @@ FUNCTION rational_maker(INTEGER a, INTEGER b)
     RETURN x;
 END-FUNCTION;
 
-FUNCTION rational_eq(rational_t x, rational_t y)
+Bool rational_eq(rational_t x, rational_t y)
     INTEGER u, v;
     u = x.numerator * y.denominator;
     v = x.denominator * y.numerator;
@@ -27,7 +27,7 @@ FUNCTION rational_eq(rational_t x, rational_t y)
     END-IF;
 END-FUNCTION;
 
-FUNCTION rational_sum(rational_t x, rational_t y)
+rational_t rational_sum(rational_t x, rational_t y)
     rational_t result;
     IF (x.denominator == y.denominator)
         result.numerator = x.numerator + y.numerator;
@@ -39,7 +39,7 @@ FUNCTION rational_sum(rational_t x, rational_t y)
     RETURN result;
 END-FUNCTION;
 
-FUNCTION rational_neg(rational_t x)
+rational_t rational_neg(rational_t x)
     IF (x.denominator > 0)
         x.numerator = -(x.numerator);
     ELSE
@@ -48,18 +48,18 @@ FUNCTION rational_neg(rational_t x)
     RETURN x;
 END-FUNCTION;
 
-FUNCTION rational_sub(rational_t x, rational_t y)
+rational_t rational_sub(rational_t x, rational_t y)
     RETURN rational_sum(x, rational_neg(y));
 END-FUNCTION;
 
-FUNCTION rational_mul(rational_t x, rational_t y)
+rational_t rational_mul(rational_t x, rational_t y)
     rational_t result;
     result.numerator = x.numerator * y.numerator;
     result.denominator = x.denominator * y.denominator;
     RETURN result;
 END-FUNCTION;
 
-FUNCTION rational_inv(rational_t x)
+rational_t rational_inv(rational_t x)
     INTEGER copy;
     copy = y.numerator;
     y.numerator = y.denominator;
@@ -67,7 +67,7 @@ FUNCTION rational_inv(rational_t x)
     RETURN y;
 END-FUNCTION;
 
-FUNCTION rational_div(rational_t x, rational_t y)
+rational_t rational_div(rational_t x, rational_t y)
     RETURN rational_mul(x, rational_inv(y));
 END-FUNCTION;
 
