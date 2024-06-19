@@ -51,10 +51,10 @@ char * cat(char *, char *, char *, char *, char *);
 %right '^'
 
 %type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
-%type <rec> funcs_and_procs stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith
+%type <rec> funcs_procs_declars stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith func_return_dims func_stm
 
 %%
-prog : funcs_and_procs PROGRAM stmlist END_PROGRAM ';' {
+prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
         char * includes = "#include <stdio.h>\n#include <math.h>\n";
         fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $1->code, $3->code);
         freeRecord($1);
@@ -62,10 +62,21 @@ prog : funcs_and_procs PROGRAM stmlist END_PROGRAM ';' {
      }
      ;
 
-funcs_and_procs : func_stm ';' funcs_and_procs {
-                    //char * s = cat();
+funcs_procs_declars : func_stm ';' funcs_procs_declars {
+                    char * s = cat($1->code, $3->code, "", "", "");
+                    $$ = createRecord(s, "", "");
+                    freeRecord($1);
+                    freeRecord($3);
+                    free(s);
                 }
-                | proc_stm ';' funcs_and_procs {
+                | proc_stm ';' funcs_procs_declars {
+                    char * s = cat($1->code, $3->code, "", "", "");
+                    $$ = createRecord(s, "", "");
+                    freeRecord($1);
+                    freeRecord($3);
+                    free(s);
+                |
+                } declar ';' funcs_procs_declars {
                     char * s = cat($1->code, $3->code, "", "", "");
                     $$ = createRecord(s, "", "");
                     freeRecord($1);
@@ -294,7 +305,33 @@ proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
 
 
 /// FUNCTIONS
-func_stm : type ID proc_params stmlist END_FUNCTION
+func_return_dims :                          {$$ = createRecord("", "", "");}
+                 | '[' ']' func_return_dims {$$ = createRecord("*", "", "");}
+
+func_stm : type func_return_dims ID proc_params stmlist END_FUNCTION {
+            already_declared_error($3);
+
+            char * argt = strtok($4->opt1, ",");
+            while(argt != NULL) {
+                printf("%s\n", argt);
+                insert_ht(argt, $1->type);
+                argt = strtok(NULL, ",");
+            }
+
+            char * x = cat($4->code, " {\n", $5->code, "\n}\n", "\n");
+            char * s = cat($1->code, $2->code, $3, x, "");
+
+            $$ = createRecord(s, $1->type, $3);
+
+            freeRecord($1);
+            freeRecord($2);
+            freeRecord($4);
+            freeRecord($5);
+            free($2);
+            free(argt);
+            free(x);
+            free(s);
+         }
          ;
 /// END-FUNCTIONS
 
