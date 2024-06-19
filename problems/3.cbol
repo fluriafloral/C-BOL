@@ -6,7 +6,7 @@ Args:
     DECIMAL a[][]: First matrix
     DECIMAL a[][]: Second matrix
 */
-FUNCTION sum_matrices(DECIMAL a[][], DECIMAL b[][])
+DECIMAL[][] sum_matrices(DECIMAL a[][], DECIMAL b[][])
     EXPECT (size(a) == size(b)) ELSE "Matrices must have same quantity of rows";
     EXPECT (size(a) > 0) ELSE "A must have at least one row";
     EXPECT (size(b) > 0) ELSE "B must have at least one row";
@@ -31,7 +31,7 @@ Args:
     DECIMAL a[][]: First matrix
     DECIMAL a[][]: Second matrix
 */
-FUNCTION prod_matrices(DECIMAL a[][], DECIMAL b[][])
+DECIMAL[][] prod_matrices(DECIMAL a[][], DECIMAL b[][])
     EXPECT (size(a) > 0) ELSE "A must have at least one row";
     EXPECT (size(b) > 0) ELSE "B must have at least one row";
     EXPECT (size(a[0]) == size(b)) ELSE "Quantity of columns in A is different from quantity of rows in B";
@@ -58,7 +58,7 @@ Args:
     INTEGER m - quantity of rows
     INTEGER n - quantity of columns
 */
-FUNCTION read_matrix(INTEGER m, INTEGER n)
+DECIMAL[][] read_matrix(INTEGER m, INTEGER n)
     DECIMAL matrix[m, n];
     FOR (INTEGER i = 0; i < m; i += 1)
         FOR (INTEGER j = 0; j < n; j += 1)
@@ -77,7 +77,7 @@ Outputs the values of a matrix.
 Args:
     DECIMAL matrix[][] - The matrix that will be printed
 */
-FUNCTION print_matrix(DECIMAL matrix[][])
+UNIT print_matrix(DECIMAL matrix[][])
     FOR (DECIMAL row[] : matrix)
         FOR (DECIMAL d : row)
             OUTPUT d;
