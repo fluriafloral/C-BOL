@@ -59,6 +59,7 @@
 "CALL"                                                       {return CALL;}
 "PROCEDURE"                                                  {return PROCEDURE;}
 "END-PROCEDURE"                                              {return END_PROCEDURE;}
+"FUNCTION"                                                   {return FUNCTION;}
 "END-FUNCTION"                                               {return END_FUNCTION;}
 
 "RETURN"                                                     {return RETURN;}
