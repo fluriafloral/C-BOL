@@ -27,7 +27,7 @@ char * cat(char *, char *, char *, char *, char *);
 %token IF THEN ELIF ELSE END_IF
 %token SWITCH CASE THRU OTHER END_SWITCH
 %token WHILE END_WHILE FOR END_FOR DO
-%token CALL PROCEDURE END_PROCEDURE END_FUNCTION
+%token CALL PROCEDURE END_PROCEDURE FUNCTION END_FUNCTION
 %token RETURN BREAK CONTINUE
 %token TRY END_TRY CATCH THROW FINALLY EXPECT
 %token LAZY LAZY_RIGHT
@@ -52,6 +52,7 @@ char * cat(char *, char *, char *, char *, char *);
 
 %type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
 %type <rec> funcs_procs_declars stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith func_return_dims func_stm
+%type <rec> declar_enum declar_struct
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
@@ -63,27 +64,34 @@ prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
      ;
 
 funcs_procs_declars : func_stm ';' funcs_procs_declars {
-                    char * s = cat($1->code, $3->code, "", "", "");
-                    $$ = createRecord(s, "", "");
-                    freeRecord($1);
-                    freeRecord($3);
-                    free(s);
-                }
-                | proc_stm ';' funcs_procs_declars {
-                    char * s = cat($1->code, $3->code, "", "", "");
-                    $$ = createRecord(s, "", "");
-                    freeRecord($1);
-                    freeRecord($3);
-                    free(s);
-                |
-                } declar ';' funcs_procs_declars {
-                    char * s = cat($1->code, $3->code, "", "", "");
-                    $$ = createRecord(s, "", "");
-                    freeRecord($1);
-                    freeRecord($3);
-                    free(s);
-                }
-                |
+                        char * s = cat($1->code, $3->code, "", "", "");
+                        $$ = createRecord(s, "", "");
+                        freeRecord($1);
+                        freeRecord($3);
+                        free(s);
+                    }
+                    | proc_stm ';' funcs_procs_declars {
+                        char * s = cat($1->code, $3->code, "", "", "");
+                        $$ = createRecord(s, "", "");
+                        freeRecord($1);
+                        freeRecord($3);
+                        free(s);
+                    }
+                    | declar_enum ';' funcs_procs_declars {
+                        char * s = cat($1->code, ";", $3->code, "", "");
+                        $$ = createRecord(s, "", "");
+                        freeRecord($1);
+                        freeRecord($3);
+                        free(s);
+                    }
+                    | declar_struct ';' funcs_procs_declars {
+                        char * s = cat($1->code, ";", $3->code, "", "");
+                        $$ = createRecord(s, "", "");
+                        freeRecord($1);
+                        freeRecord($3);
+                        free(s);
+                    }
+                    | {$$ = createRecord("", "", "");}
                 ;
 
 /// TYPES
@@ -306,28 +314,35 @@ proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
 
 /// FUNCTIONS
 func_return_dims :                          {$$ = createRecord("", "", "");}
-                 | '[' ']' func_return_dims {$$ = createRecord("*", "", "");}
+                 | '[' ']' func_return_dims {
+                    char * s = cat("*", $3->code, "", "", "");
 
-func_stm : type func_return_dims ID proc_params stmlist END_FUNCTION {
-            already_declared_error($3);
+                    $$ = createRecord(s, "", "");
 
-            char * argt = strtok($4->opt1, ",");
+                    freeRecord($3);
+                    free(s);
+                }
+
+func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
+            already_declared_error($4);
+
+            char * argt = strtok($5->opt1, ",");
             while(argt != NULL) {
                 printf("%s\n", argt);
-                insert_ht(argt, $1->type);
+                insert_ht(argt, $2->type);
                 argt = strtok(NULL, ",");
             }
 
-            char * x = cat($4->code, " {\n", $5->code, "\n}\n", "\n");
-            char * s = cat($1->code, $2->code, $3, x, "");
+            char * x = cat($5->code, " {\n", $6->code, "\n}\n", "\n");
+            char * s = cat($2->code, $3->code, $4, x, "");
 
-            $$ = createRecord(s, $1->type, $3);
+            $$ = createRecord(s, $2->type, $4);
 
-            freeRecord($1);
             freeRecord($2);
-            freeRecord($4);
+            freeRecord($3);
             freeRecord($5);
-            free($2);
+            freeRecord($6);
+            free($3);
             free(argt);
             free(x);
             free(s);
@@ -363,8 +378,14 @@ declar_enum_items : declar_enum_item
 declar_enum : ENUM ID declar_enum_items END_ENUM
             ;
 
-declar_array_dimensions :
-                        | '[' exp ']' declar_array_dimensions
+declar_array_dimensions :                                     {$$ = createRecord("", "", "");}
+                        | '[' exp ']' declar_array_dimensions {
+                            char * s = cat("[", $2->code, "]", $4->code, "");
+                            $$ = createRecord(s, "", "");
+                            freeRecord($2);
+                            freeRecord($4);
+                            free(s);
+                        }
                         ;
 
 declar_var : ID {
