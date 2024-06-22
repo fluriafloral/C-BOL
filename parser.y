@@ -10,6 +10,7 @@ int yyerror(char *s);
 void already_declared_error(char *s);
 void undeclared_error(char *s);
 void type_error(char *t1, char*t2);
+void check_variable(const char* var_name);
 extern int yylineno;
 extern char * yytext;
 extern FILE * yyin, * yyout;
@@ -752,4 +753,11 @@ char * cat(char * s1, char * s2, char * s3, char * s4, char * s5) {
   sprintf(output, "%s%s%s%s%s", s1, s2, s3, s4, s5);
   
   return output;
+}
+
+void check_variable(const char* var_name) {
+    if (find_variable(var_name) == NULL) {
+        printf("Error: Variable '%s' not found\n", var_name);
+        exit(1);
+    }
 }
