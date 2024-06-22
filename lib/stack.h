@@ -1,7 +1,9 @@
-#ifndef STACK
-#define STACK
+#ifndef STACK_H
+#define STACK_H
 #include <stddef.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_VAR_NAME 256
 #define MAX_TYPE_NAME 100
@@ -19,7 +21,7 @@ typedef struct StackFrame {
     struct StackFrame* next;
 } StackFrame;
 
-StackFrame* stack = NULL;
+static StackFrame* stack = NULL;
 
 
 void push_frame(const char* scope_name);

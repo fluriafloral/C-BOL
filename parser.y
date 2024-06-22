@@ -4,6 +4,7 @@
 #include <string.h>
 #include "./lib/hashtable.h"
 #include "./lib/record.h"
+#include "./lib/stack.h"
 
 int yylex(void);
 int yyerror(char *s);
