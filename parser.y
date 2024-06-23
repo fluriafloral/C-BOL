@@ -58,10 +58,13 @@ char * cat(char *, char *, char *, char *, char *);
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
+        const char * global_frame = "global";
+        push_frame(global_frame);
         char * includes = "#include <stdio.h>\n#include <math.h>\n";
         fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $1->code, $3->code);
         freeRecord($1);
         freeRecord($3);
+        pop_frame();
      }
      ;
 
@@ -309,21 +312,34 @@ proc_params : '(' proc_args ')' {
 
 proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
             already_declared_error($2);
-            char * argt;
+            push_frame($2);
+
+            char *argt, *t, *i;
             argt = strtok($3->opt1, ",");
             while (argt != NULL) {
+                t = strtok(argt, "#");
+                i = strtok(NULL, "#");
+
                 printf("%s\n", argt);
-                //insert_ht(arg, $1->type);
+                add_variable(i, t, "");
+                insert_ht(argt, "");
                 argt = strtok(NULL, ",");
             }
+            free(argt);
+            free(t);
+            free(i);
+
             char * s = cat("void ", $2, $3->code, "{\n", $4->code);
             s = cat(s, "}\n", "", "", "");
+
             $$ = createRecord(s, "", "");
+
             freeRecord($3);
             freeRecord($4);
             free($2);
             free(argt);
             free(s);
+            pop_frame();
          }
          ;
 /// END-PROCEDURE
@@ -345,22 +361,25 @@ func_return_dims :                          {$$ = createRecord("", "", "");}
 
 func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
             already_declared_error($4);
+            push_frame($4);
 
-            char * argt;
-            char * t; 
-            char * i;
+            char *argt, *t, *i;
             argt = strtok($5->opt1, ",");
             while(argt != NULL) {
                 t = strtok(argt, "#");
                 i = strtok(NULL, "#");
 
                 printf("%s\n", argt);
-                //insert_ht(argt, $2->type);
+                add_variable(i, t, "");
+                insert_ht(i, "");
                 argt = strtok(NULL, ",");
             }
+            free(argt);
+            free(t);
+            free(i);
 
-            char * x = cat($5->code, " {\n", $6->code, "\n}\n", "\n");
-            char * s = cat($2->code, $3->code, $4, x, "");
+            char * s = cat($2->code, $3->code, $4, $5->code, " {\n");
+            s = cat(s, $6->code, "\n}\n", "", "");
 
             $$ = createRecord(s, $2->type, $4);
 
@@ -369,9 +388,8 @@ func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
             freeRecord($5);
             freeRecord($6);
             free($3);
-            free(argt);
-            free(x);
             free(s);
+            pop_frame();
          }
          ;
 /// END-FUNCTIONS
