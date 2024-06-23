@@ -54,7 +54,7 @@ char * cat(char *, char *, char *, char *, char *);
 
 %type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
 %type <rec> funcs_procs_declars stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith func_return_dims func_stm
-%type <rec> declar_enum declar_struct
+%type <rec> declar_enum declar_struct proc_arg_dims
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
@@ -252,6 +252,16 @@ try_stm : TRY stmlist try_catches try_finally_optional END_TRY
 
 
 /// PROCEDURE
+proc_arg_dims :         {$$ = createRecord("", "", "");}
+              | '[' ']' proc_arg_dims {
+                char * s = cat("[]", $3-> code, "", "" ,"");
+
+                $$ = createRecord(s, "", "");
+
+                freeRecord($3);
+                free(s);
+              }
+
 proc_arg_typado : type ID {
                     char * s = cat($1->code, $2, "", "", "");
                     char * opt = cat($1->type, "#", $2, "", "");
@@ -262,7 +272,15 @@ proc_arg_typado : type ID {
                     free(opt);
                 }
                 | type '@' ID 
-                | type ID '[' ']'
+                | type ID '[' ']' proc_arg_dims {
+                    char * s = cat($1->code, $2, "[]", $5->code, "");
+                    char * opt = cat($1->type, "#", $2, "", "");
+                    $$ = createRecord(s, $1->type,opt);
+                    freeRecord($1);
+                    free($2);
+                    free(s);
+                    free(opt);
+                }
                 ;
 
 proc_args : proc_arg_typado {$$ = $1;}
@@ -328,10 +346,16 @@ func_return_dims :                          {$$ = createRecord("", "", "");}
 func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
             already_declared_error($4);
 
-            char * argt = strtok($5->opt1, ",");
+            char * argt;
+            char * t; 
+            char * i;
+            argt = strtok($5->opt1, ",");
             while(argt != NULL) {
+                t = strtok(argt, "#");
+                i = strtok(NULL, "#");
+
                 printf("%s\n", argt);
-                insert_ht(argt, $2->type);
+                //insert_ht(argt, $2->type);
                 argt = strtok(NULL, ",");
             }
 
