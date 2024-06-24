@@ -31,7 +31,7 @@ char * cat(char *, char *, char *, char *, char *);
 %token WHILE END_WHILE FOR END_FOR DO
 %token CALL PROCEDURE END_PROCEDURE FUNCTION END_FUNCTION
 %token RETURN BREAK CONTINUE
-%token TRY END_TRY CATCH THROW FINALLY EXPECT
+%token TRY END_TRY CATCH THROW FINALLY EXPECT SIZE
 %token LAZY LAZY_RIGHT
 %token NOT AND AND_THEN OR OR_ELSE XOR
 %token '^' '*' '/' '%' '+' '-'
@@ -54,7 +54,7 @@ char * cat(char *, char *, char *, char *, char *);
 
 %type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
 %type <rec> funcs_procs_declars stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith func_return_dims func_stm
-%type <rec> declar_enum declar_struct proc_arg_dims
+%type <rec> declar_enum declar_struct proc_arg_dims exp_size expect_stm
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
@@ -234,7 +234,11 @@ do_stm : DO stmlist THEN WHILE exp
 
 
 /// EXCEPTIONS
-expect_stm : EXPECT exp ELSE TEXT
+expect_stm : EXPECT '(' exp_logic ')' ELSE TEXT {
+                char * s = cat("if(!(", $3->code, ")) {\nprintf(", $6, ");\n");
+                s = cat(s, "break;\n}", "", "", "");
+                $$ = createRecord(s, "", $3->opt1);
+           }
            ;
 
 try_catches : CATCH '(' P_TYPE ID ')' stmlist
@@ -278,7 +282,7 @@ proc_arg_typado : type ID {
                 | type ID '[' ']' proc_arg_dims {
                     char * s = cat($1->code, $2, "[]", $5->code, "");
                     char * opt = cat($1->type, "#", $2, "", "");
-                    $$ = createRecord(s, $1->type,opt);
+                    $$ = createRecord(s, $1->type, opt);
                     freeRecord($1);
                     free($2);
                     free(s);
@@ -322,12 +326,19 @@ proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
 
                 printf("%s\n", argt);
                 add_variable(i, t, "");
-                insert_ht(argt, "");
+                insert_ht(i, t);
                 argt = strtok(NULL, ",");
+            }
+
+            char * vars = strtok($4->opt1, ",");
+            while(vars != NULL) {
+                undeclared_error(vars);
+                vars = strtok(NULL, ",");
             }
             free(argt);
             free(t);
             free(i);
+            free(vars);
 
             char * s = cat("void ", $2, $3->code, "{\n", $4->code);
             s = cat(s, "}\n", "", "", "");
@@ -377,6 +388,16 @@ func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
             free(argt);
             free(t);
             free(i);
+
+            char * vars = strtok($6->opt1, ",");
+            while(vars != NULL) {
+                undeclared_error(vars);
+                vars = strtok(NULL, ",");
+            }
+            free(argt);
+            free(t);
+            free(i);
+            free(vars);
 
             char * s = cat($2->code, $3->code, $4, $5->code, " {\n");
             s = cat(s, $6->code, "\n}\n", "", "");
@@ -433,12 +454,12 @@ declar_array_dimensions :                                     {$$ = createRecord
                         ;
 
 declar_var : ID {
-                already_declared_error($1);
+                //already_declared_error($1);
                 $$ = createRecord($1, "", $1);
                 free($1);
            }
            | ID '=' exp {
-                already_declared_error($1);
+                //already_declared_error($1);
                 char * s = cat($1, "=", $3->code, "", "");
                 $$ = createRecord(s, $3->type, $1);
                 freeRecord($3);
@@ -446,19 +467,26 @@ declar_var : ID {
                 free(s);
            }
            | '@' ID {
-                already_declared_error($2);
+                //already_declared_error($2);
                 char * s = cat("*", $2, "", "", "");
                 $$ = createRecord(s, "", s);
                 free($2);
                 free(s);
            }
-           | ID '[' exp ']' declar_array_dimensions
+           | ID '[' exp ']' declar_array_dimensions {
+                //already_declared_error($2);
+                char * s = cat($1, "[", $3->code, "]", $5->code);
+                $$ = createRecord(s, "", $1);
+                freeRecord($3);
+                freeRecord($5);
+                free($1);
+           }
            | ID '[' exp ']' declar_array_dimensions '=' exp
            ;
 
 declar_vars : declar_var {$$ = $1;}
             | declar_var ',' declar_vars {
-                type_error($1->type, $3->type);
+                //type_error($1->type, $3->type);
                 char * x = cat($1->opt1, ",", $3->opt1, "", "");
                 char * s = cat($1->code, ",", $3->code, "", "");
                 $$ = createRecord(s, $1->type, x);
@@ -470,7 +498,7 @@ declar_vars : declar_var {$$ = $1;}
             ;
 
 declar : type declar_vars {
-            type_error($1->type, $2->type);
+            //type_error($1->type, $2->type);
             char *id;
             id = strtok($2->opt1, ",");
             while (id != NULL) {
@@ -531,12 +559,14 @@ exp_literal : UNIT {
           ;
 
 exp_logic : exp RELATIONAL exp {
+            char * opts = cat($1->opt1, ",", $3->opt1, "", "");
             char * s = cat($1->code, $2, $3->code, "", "");
-            $$ = createRecord(s, "", "");
+            $$ = createRecord(s, "", opts);
             freeRecord($1);
             freeRecord($3);
             free($2);
             free(s);
+            free(opts);
           }
           | exp AND exp
           | exp AND_THEN exp
@@ -594,23 +624,51 @@ exp_array_values : exp
 exp_array_list : '{' exp_array_values '}'
                ;
 
+exp_size : SIZE '(' ID ')'                                 {
+            char * s = cat("sizeof(", $3, ")", "", "");
+            $$ = createRecord(s, "", $3);
+            free($3);
+            free(s);
+         } 
+         | SIZE '(' ID '[' exp ']' declar_array_dimensions ')' {
+            char * opts = cat($3, ",", $5->opt1, ",", $7->opt1);
+            char * s = cat("sizeof(", $3, "[", $5->code, "]");
+            s = cat(s, $7->code, ")", "", "");
+            $$ = createRecord(s, "", opts);
+            freeRecord($5);
+            freeRecord($7);
+            free($3);
+            free(opts);
+            free(s);
+         } 
+         ;
+
 exp : exp_literal {$$ = $1;}
     | ID {
-        undeclared_error($1);
-        $$ = createRecord($1, retrieve_ht($1), "");
+        $$ = createRecord($1, "", $1);
         free($1);
     }
     | ID '.' ID
-    | ID '[' exp ']'
+    | ID '[' exp ']' declar_array_dimensions {
+        char * opts = cat($1, ",", $3->opt1, ",", $5->opt1);
+        char * s = cat($1, "[", $3->code, "]", $5->code);
+        $$ = createRecord(s, "", opts);
+        freeRecord($3);
+        freeRecord($5);
+        free($1);
+        free(opts);
+        free(s);
+    }
     | '@' ID
     | ID exp_func_args
     | exp_array_list
+    | exp_size
     | exp_logic {$$ = $1;}
     | exp_arith
     | exp_lazy '(' exp_arith ')'
     | '(' exp ')' {
         char * s = cat("(", $2->code, ")", "", "");
-        $$ = createRecord(s, $2->type, "");
+        $$ = createRecord(s, $2->type, $2->opt1);
         freeRecord($2);
         free(s);
     }
@@ -643,16 +701,28 @@ assign_op_stm : ID '+' '=' exp
 
 /// STMS
 assign : ID '=' exp {
-            undeclared_error($1);
-            type_error(retrieve_ht($1), $3->type);
+            char * opts = cat($1, ",", $3->opt1, "", "");
             char * s = cat($1, " = ", $3->code, "", "");
-            $$ = createRecord(s, "", "");
+            $$ = createRecord(s, $3->type, opts);
             freeRecord($3);
             free($1);
+            free(opts);
             free(s);
        }
        | ID '.' ID '=' exp
-       | ID '[' exp ']' '=' exp
+       | ID '[' exp ']' declar_array_dimensions '=' exp {
+            char * opts = cat($1, ",", $3->opt1, ",", $5->opt1);
+            opts = cat(opts, ",", $7->opt1, "", "");
+            char * s = cat($1, "[", $3->code, "]", $5->code);
+            s = cat(s, "=", $7->code, "", "");
+            $$ = createRecord(s, "", opts);
+            freeRecord($3);
+            freeRecord($5);
+            freeRecord($7);
+            free($1);
+            free(opts);
+            free(s);
+       }
        | '@' ID '=' exp
        ;
        
@@ -663,7 +733,7 @@ stm : assign {$$ = $1;}
     | for_stm {}
     | do_stm {}
     | declar {$$ = $1;}
-    | expect_stm {}
+    | expect_stm {$$ = $1;}
     | try_stm {}
     | proc_stm {}
     | func_stm {}
@@ -674,7 +744,6 @@ stm : assign {$$ = $1;}
     | RETURN exp {}
     | assign_op_stm {}
     | INPUT ID {
-        undeclared_error($2);
         char * markup = "\%s";
         char * prefix_input = "&";
         char * _type = retrieve_ht($2);
