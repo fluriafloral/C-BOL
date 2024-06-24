@@ -54,7 +54,7 @@ char * cat(char *, char *, char *, char *, char *);
 
 %type <rec> switch_case_thru switch_case_optional switch_case switch_stmts exp_logic while_stmts proc_stm proc_params proc_args proc_arg_typado
 %type <rec> funcs_procs_declars stmlist stm declar declar_vars declar_var declar_array_dimensions exp exp_literal type assign exp_arith func_return_dims func_stm
-%type <rec> declar_enum declar_struct proc_arg_dims exp_size expect_stm
+%type <rec> declar_enum declar_struct proc_arg_dims exp_size expect_stm for_stm for_var_init assign_op_stm
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
@@ -217,11 +217,36 @@ while_stmts : WHILE exp stmlist END_WHILE {
             }
             ;
 
-for_var_init : type assign
-             | assign
+for_var_init : type assign {
+                char * s = cat($1->code, $2->code, "", "", "");
+                $$ = createRecord(s, $1->type, $2->opt1);
+                freeRecord($1);
+                freeRecord($2);
+                free(s);
+             }
+             | assign {
+                $$ = $1;
+             } 
              ;
 
-for_stm : FOR '(' for_var_init ';' exp ';' stm ')' stmlist END_FOR
+for_stm : FOR '(' for_var_init ';' exp ';' stm ')' stmlist END_FOR {
+            unsigned long loop_id = (unsigned long) &$5;
+            char loop_id_str[21];
+
+            snprintf(loop_id_str, sizeof(loop_id_str), "%lu", loop_id);
+
+            char * opts = cat($3->opt1, ",", $5->opt1, ",", $9->opt1);
+            char * s = cat("for", loop_id_str, ":\n", $9->code, $7->code);
+            s = cat("\nif(", $5->code, ")\ngoto for", loop_id_str, "");
+            $$ = createRecord(s, "", opts);
+
+            freeRecord($3);
+            freeRecord($5);
+            freeRecord($7);
+            freeRecord($9);
+            free(opts);
+            free(s);
+        }
         | FOR '(' type ID ':' ID ')' stmlist END_FOR
         ;
 
@@ -469,7 +494,7 @@ declar_var : ID {
            | '@' ID {
                 //already_declared_error($2);
                 char * s = cat("*", $2, "", "", "");
-                $$ = createRecord(s, "", s);
+                $$ = createRecord(s, "", $2);
                 free($2);
                 free(s);
            }
@@ -513,7 +538,7 @@ declar : type declar_vars {
                 id = strtok(NULL, ",");
             }
             char * s = cat($1->code, $2->code, "", "", "");
-            $$ = createRecord(s, "", "");
+            $$ = createRecord(s, "", $2->opt1);
             freeRecord($1);
             freeRecord($2);
             free(s);
@@ -686,7 +711,15 @@ exp : exp_literal {$$ = $1;}
 
 
 /// ASSIGN-OP
-assign_op_stm : ID '+' '=' exp
+assign_op_stm : ID '+' '=' exp {
+                char * opts = cat($1, ",", $4->opt1, "", "");
+                char * s = cat($1, " += ", $4->code, "", "");
+                $$ = createRecord(s, "", opts);
+                freeRecord($4);
+                free($1);
+                free(opts);
+                free(s);
+              }
               | ID '-' '=' exp
               | ID '*' '=' exp
               | ID '/' '=' exp
@@ -730,19 +763,24 @@ stm : assign {$$ = $1;}
     | if_stmts {}
     | switch_stmts {$$ = $1;}
     | while_stmts {$$ = $1;}
-    | for_stm {}
+    | for_stm {$$ = $1;}
     | do_stm {}
     | declar {$$ = $1;}
     | expect_stm {$$ = $1;}
     | try_stm {}
-    | proc_stm {}
-    | func_stm {}
+    | proc_stm {$$ = $1;}
+    | func_stm {$$ = $1;}
     | CALL ID exp_func_args {}
     | CONTINUE {}
     | BREAK {$$ = createRecord("break", "", "");}
     | THROW exp {}
-    | RETURN exp {}
-    | assign_op_stm {}
+    | RETURN exp { 
+        char * s = cat("return ", $2->code, "", "", "");
+        $$ = createRecord(s, "", $2->opt1);
+        freeRecord($2);
+        free(s);
+    }
+    | assign_op_stm {$$ = $1;}
     | INPUT ID {
         char * markup = "\%s";
         char * prefix_input = "&";
@@ -786,15 +824,17 @@ stm : assign {$$ = $1;}
 
 stmlist : stm ';' {
         char * s = cat($1->code, ";\n", "", "", "");
-        $$ = createRecord(s, "", "");
+        $$ = createRecord(s, "", $1->opt1);
         freeRecord($1);
         free(s);
     }
 	| stm ';' stmlist {
+        char * opts = cat($1->opt1, ",", $3->opt1, "", "");
         char * s = cat($1->code, ";\n", $3->code, "", "");
-        $$ = createRecord(s, "", "");
+        $$ = createRecord(s, "", opts);
         freeRecord($1);
         freeRecord($3);
+        free(opts);
         free(s);
     }
 	;
