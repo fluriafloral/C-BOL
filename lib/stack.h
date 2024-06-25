@@ -21,9 +21,7 @@ typedef struct StackFrame {
     struct StackFrame* next;
 } StackFrame;
 
-static StackFrame* stack = NULL;
-
-
+StackFrame * get_stack();
 void push_frame(const char* scope_name);
 
 void pop_frame();

@@ -1,6 +1,11 @@
 #include "stack.h"
 #include <stdio.h>
 
+StackFrame* stack = NULL;
+
+StackFrame* get_stack() {
+    return stack;
+}
 
 void push_frame(const char* scope_name) {
     StackFrame* frame = (StackFrame*)malloc(sizeof(StackFrame));
