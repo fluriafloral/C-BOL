@@ -13,6 +13,7 @@ void already_declared_error(char *s);
 void undeclared_error(char *s);
 void type_error(char *t1, char*t2);
 void check_variable(const char* var_name);
+void vars_routine(record * r);
 extern int yylineno;
 extern char * yytext;
 extern FILE * yyin, * yyout;
@@ -59,8 +60,12 @@ char * cat(char *, char *, char *, char *, char *);
 
 %%
 prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
-        const char * global_frame = "global";
+        const char * global_frame = "main";
         push_frame(global_frame);
+        for (int i = 0; i < $3->num_vars_used; ++i) {
+            printf("%s %d\n", $3->vars[i]->name, $3->vars[i]->kind_of_use);
+        }
+        vars_routine($3);
         char * includes = "#include <stdio.h>\n#include <math.h>\n";
         fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $1->code, $3->code);
         freeRecord($1);
@@ -165,7 +170,11 @@ switch_case_thru : CASE exp THRU exp ':' switch_case_optional {
                         ++i;
                     }
                     s = cat(s, "\n", $6->code, "", "");
-                    $$ = createRecord(NULL, 0, s, "", "");
+                    record * r = createRecord(NULL, 0, s, "", "");
+                    dup_vars(r, $2->num_vars_used, $2->vars);
+                    dup_vars(r, $4->num_vars_used, $4->vars);
+                    dup_vars(r, $6->num_vars_used, $6->vars);
+                    $$ = r;
                     freeRecord($2);
                     freeRecord($4);
                     freeRecord($6);
@@ -178,7 +187,10 @@ switch_case : CASE exp ':' switch_case_optional
             | switch_case_thru {$$ = $1;}
             | switch_case_thru switch_case {
                 char * s = cat($1->code, $2->code, "", "", "");
-                $$ = createRecord(NULL, 0, s, "", "");
+                record * r = createRecord(NULL, 0, s, "", "");
+                dup_vars(r, $1->num_vars_used, $1->vars);
+                dup_vars(r, $2->num_vars_used, $2->vars);
+                $$ = r;
                 freeRecord($1);
                 freeRecord($2);
                 free(s);
@@ -188,7 +200,10 @@ switch_case : CASE exp ':' switch_case_optional
         
 switch_stmts : SWITCH exp switch_case END_SWITCH {
                 char * s = cat("switch (", $2->code, ") {\n", $3->code, "\n}");
-                $$ = createRecord(NULL, 0, s, "", "");
+                record * r = createRecord(NULL, 0, s, "", "");
+                dup_vars(r, $2->num_vars_used, $2->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($2);
                 freeRecord($3);
                 free(s);
@@ -211,7 +226,10 @@ while_stmts : WHILE exp stmlist END_WHILE {
 
                 char * s = cat("while", loop_id_str, ":\n", $3->code, "\nif(");
                 s = cat(s, $2->code, ")\ngoto while", loop_id_str, "");
-                $$ = createRecord(NULL, 0, s, "", "");
+                record * r = createRecord(NULL, 0, s, "", "");
+                dup_vars(r, $2->num_vars_used, $2->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($2);
                 freeRecord($3);
                 free(s);
@@ -403,26 +421,8 @@ func_return_dims :                          {$$ = createRecord(NULL, 0, "", "", 
 func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
             // already_declared_error($4);
             push_frame($4);
-
-            for (int i = 0; i < $5->num_vars_used; ++i) {
-                int is_declar = $5->vars[i]->kind_of_use == 0;
-                char * key = cat(get_stack()->scope_name, ",", $5->vars[i]->name, "", "");
-                if (is_declar) {
-                    insert_ht(key, $5->vars[i]->type);
-                } else {
-                    undeclared_error(key);
-                }
-            }
-
-            for (int i = 0; i < $6->num_vars_used; ++i) {
-                int is_declar = $6->vars[i]->kind_of_use == 0;
-                char * key = cat(get_stack()->scope_name, ",", $6->vars[i]->name, "", "");
-                if (is_declar) {
-                    insert_ht(key, $6->vars[i]->type);
-                } else {
-                    undeclared_error(key);
-                }
-            }
+            vars_routine($5);
+            vars_routine($6);
 
             char * s = cat($2->code, $3->code, $4, $5->code, " {\n");
             s = cat(s, $6->code, "\n}\n", "", "");
@@ -480,13 +480,18 @@ declar_array_dimensions :                                     {$$ = createRecord
 
 declar_var : ID {
                 //already_declared_error($1);
-                $$ = createRecord(NULL, 0, $1, "", $1);
+                record * r = createRecord(NULL, 0, $1, "", $1);
+                push_var(r, createVar($1, 0, "", ""));
+                $$ = r;
                 free($1);
            }
            | ID '=' exp {
                 //already_declared_error($1);
                 char * s = cat($1, "=", $3->code, "", "");
-                $$ = createRecord(NULL, 0, s, $3->type, $1);
+                record * r = createRecord(NULL, 0, s, $3->type, $1);
+                push_var(r, createVar($1, 0, $3->code, $3->type));
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($3);
                 free($1);
                 free(s);
@@ -511,38 +516,23 @@ declar_var : ID {
 
 declar_vars : declar_var {$$ = $1;}
             | declar_var ',' declar_vars {
-                //type_error($1->type, $3->type);
-                char * x = cat($1->opt1, ",", $3->opt1, "", "");
                 char * s = cat($1->code, ",", $3->code, "", "");
-                $$ = createRecord(NULL, 0, s, $1->type, x);
+                record * r = createRecord(NULL, 0, s, $1->type, "");
+                dup_vars(r, $1->num_vars_used, $1->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($1);
                 freeRecord($3);
                 free(s);
-                free(x);
             }
             ;
 
 declar : type declar_vars {
-            //type_error($1->type, $2->type);
-            char *id;
-            id = strtok($2->opt1, ",");
-            while (id != NULL) {
-                if (id[0] == '*'){
-                    id = strtok(id, "*");
-                    char * s = cat($1->type, " @", "", "", "");
-                    insert_ht(id, s);
-                }
-                else {
-                    insert_ht(id, $1->type);
-                }
-                id = strtok(NULL, ",");
-            }
             char * s = cat($1->code, $2->code, "", "", "");
-            $$ = createRecord(NULL, 0, s, "", $2->opt1);
+            $$ = createRecord($2->vars, $2->num_vars_used, s, "", $2->opt1);
             freeRecord($1);
             freeRecord($2);
             free(s);
-            free(id);
        }
        | CONST type ID '=' exp
        | declar_struct
@@ -604,7 +594,10 @@ exp_logic : exp RELATIONAL exp {
 exp_arith : exp '+' exp {
                 char * s = cat($1->code, " + ", $3->code, "", "");
                 // TODO: Typewise
-                $$ = createRecord(NULL, 0, s, $1->type, "");
+                record * r = createRecord(NULL, 0, s, $1->type, "");
+                dup_vars(r, $1->num_vars_used, $1->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($1);
                 freeRecord($3);
                 free(s);
@@ -612,7 +605,10 @@ exp_arith : exp '+' exp {
           | exp '-' exp {
                 char * s = cat($1->code, " - ", $3->code, "", "");
                 // TODO: Typewise
-                $$ = createRecord(NULL, 0, s, $1->type, "");
+                record * r = createRecord(NULL, 0, s, $1->type, "");
+                dup_vars(r, $1->num_vars_used, $1->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($1);
                 freeRecord($3);
                 free(s);
@@ -623,7 +619,10 @@ exp_arith : exp '+' exp {
           | exp '^' exp {
                 char * s = cat("pow(", $1->code, ", ", $3->code, ")");
                 // TODO: Typewise
-                $$ = createRecord(NULL, 0, s, $1->type, "");
+                record * r = createRecord(NULL, 0, s, $1->type, "");
+                dup_vars(r, $1->num_vars_used, $1->vars);
+                dup_vars(r, $3->num_vars_used, $3->vars);
+                $$ = r;
                 freeRecord($1);
                 freeRecord($3);
                 free(s);
@@ -696,7 +695,9 @@ exp : exp_literal {$$ = $1;}
     | exp_lazy '(' exp_arith ')'
     | '(' exp ')' {
         char * s = cat("(", $2->code, ")", "", "");
-        $$ = createRecord(NULL, 0, s, $2->type, $2->opt1);
+        record * r = createRecord(NULL, 0, s, $2->type, $2->opt1);
+        dup_vars(r, $2->num_vars_used, $2->vars);
+        $$ = r;
         freeRecord($2);
         free(s);
     }
@@ -739,7 +740,9 @@ assign_op_stm : ID '+' '=' exp {
 assign : ID '=' exp {
             char * opts = cat($1, ",", $3->opt1, "", "");
             char * s = cat($1, " = ", $3->code, "", "");
-            $$ = createRecord(NULL, 0, s, $3->type, opts);
+            record * r = createRecord(NULL, 0, s, $3->type, opts);
+            push_var(r, createVar($1, 1, $3->code, ""));
+            $$ = r;
             freeRecord($3);
             free($1);
             free(opts);
@@ -785,25 +788,11 @@ stm : assign {$$ = $1;}
     }
     | assign_op_stm {$$ = $1;}
     | INPUT ID {
-        char * markup = "\%s";
-        char * prefix_input = "&";
-        char * _type = retrieve_ht($2);
-
-        if (strcmp(_type, "TEXT") == 0) {
-            prefix_input = "";
-        } else if (strcmp(_type, "INTEGER") == 0) {
-            markup = "\%d";
-        } else if (strcmp(_type, "CHARACTER") == 0) {
-            markup = "\%c";
-        } else if (strcmp(_type, "REAL") == 0) {
-            markup = "\%f";
-        } else if (strcmp(_type, "DECIMAL") == 0) {
-            markup = "\%lf";
-        }
-
-        char * s1 = cat("scanf(\"", markup, "\", ", prefix_input, $2);
+        char * s1 = cat("scanf(\"", "%s", "\", ", "", $2);
         char * s = cat(s1, ")", "", "", "");
-        $$ = createRecord(NULL, 0, s, "", "");
+        record * r = createRecord(NULL, 0, s, "", "");
+        push_var(r, createVar($2, 1, "", ""));
+        $$ = r;
         free($2);
         free(s1);
         free(s);
@@ -834,7 +823,10 @@ stmlist : stm ';' {
 	| stm ';' stmlist {
         char * opts = cat($1->opt1, ",", $3->opt1, "", "");
         char * s = cat($1->code, ";\n", $3->code, "", "");
-        $$ = createRecord(NULL, 0, s, "", opts);
+        record * r = createRecord(NULL, 0, s, "", opts);
+        dup_vars(r, $1->num_vars_used, $1->vars);
+        dup_vars(r, $3->num_vars_used, $3->vars);
+        $$ = r;
         freeRecord($1);
         freeRecord($3);
         free(opts);
@@ -914,5 +906,17 @@ void check_variable(const char* var_name) {
     if (find_variable(var_name) == NULL) {
         printf("Error: Variable '%s' not found\n", var_name);
         exit(1);
+    }
+}
+
+void vars_routine(record  * r) {
+    for (int i = 0; i < r->num_vars_used; ++i) {
+        int is_declar = r->vars[i]->kind_of_use == 0;
+        char * key = cat(get_stack()->scope_name, ",", r->vars[i]->name, "", "");
+        if (is_declar) {
+            insert_ht(key, r->vars[i]->type);
+        } else {
+            undeclared_error(key);
+        }
     }
 }
