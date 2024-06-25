@@ -8,6 +8,7 @@
 
 
 int yylex(void);
+void push();
 int yyerror(char *s);
 void already_declared_error(char *s);
 void undeclared_error(char *s);
@@ -59,24 +60,22 @@ char * cat(char *, char *, char *, char *, char *);
 %type <rec> declar_enum declar_struct proc_arg_dims exp_size expect_stm for_stm for_var_init assign_op_stm
 
 %%
-prog : funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
-        const char * global_frame = "main";
-        push_frame(global_frame);
-        for (int i = 0; i < $3->num_vars_used; ++i) {
-            printf("%s %d\n", $3->vars[i]->name, $3->vars[i]->kind_of_use);
-        }
-        vars_routine($3);
+prog : {push_frame("main");} funcs_procs_declars PROGRAM stmlist END_PROGRAM ';' {
+        vars_routine($4);
         char * includes = "#include <stdio.h>\n#include <math.h>\n";
-        fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $1->code, $3->code);
-        freeRecord($1);
-        freeRecord($3);
+        fprintf(yyout, "%s\n%s\nint main() {\n%s\nreturn 0;\n}\n", includes, $2->code, $4->code);
+        freeRecord($2);
+        freeRecord($4);
         pop_frame();
      }
      ;
 
 funcs_procs_declars : func_stm ';' funcs_procs_declars {
                         char * s = cat($1->code, $3->code, "", "", "");
-                        $$ = createRecord(NULL, 0, s, "", "");
+                        record * r = createRecord(NULL, 0, s, "", "");
+                        dup_vars(r, $1->num_vars_used, $1->vars);
+                        dup_vars(r, $3->num_vars_used, $3->vars);
+                        $$ = r;
                         freeRecord($1);
                         freeRecord($3);
                         free(s);
@@ -354,6 +353,7 @@ proc_args : proc_arg_typado {$$ = $1;}
 proc_params : '(' proc_args ')' {
                 char * s = cat("(", $2->code, ")", "", "");
                 $$ = createRecord($2->vars, $2->num_vars_used, s, "", $2->opt1);
+                vars_routine($2);
                 freeRecord($2);
                 free(s);
             }
@@ -363,9 +363,6 @@ proc_params : '(' proc_args ')' {
             ;
 
 proc_stm : PROCEDURE ID proc_params stmlist END_PROCEDURE {
-            already_declared_error($2);
-            push_frame($2);
-
             char *argt, *t, *i;
             argt = strtok($3->opt1, ",");
             while (argt != NULL) {
@@ -418,21 +415,20 @@ func_return_dims :                          {$$ = createRecord(NULL, 0, "", "", 
                     free(s);
                 }
 
-func_stm : FUNCTION type func_return_dims ID proc_params stmlist END_FUNCTION {
-            // already_declared_error($4);
-            push_frame($4);
-            vars_routine($5);
-            vars_routine($6);
+func_stm : FUNCTION type func_return_dims ID { push_frame($4); } proc_params stmlist END_FUNCTION {
+            vars_routine($7);
+            char * s = cat($2->code, $3->code, $4, $6->code, " {\n");
+            s = cat(s, $7->code, "\n}\n", "", "");
 
-            char * s = cat($2->code, $3->code, $4, $5->code, " {\n");
-            s = cat(s, $6->code, "\n}\n", "", "");
-
-            $$ = createRecord(NULL, 0, s, $2->type, $4);
+            record * r = createRecord(NULL, 0, s, $2->type, $4);
+            dup_vars(r, $6->num_vars_used, $6->vars);
+            dup_vars(r, $7->num_vars_used, $7->vars);
+            $$ = r;
 
             freeRecord($2);
             freeRecord($3);
-            freeRecord($5);
             freeRecord($6);
+            freeRecord($7);
             free($4);
             free(s);
             pop_frame();
@@ -864,7 +860,7 @@ int yyerror (char *msg) {
 }
 
 void undeclared_error(char * s) {
-    if (!retrieve_ht(s)) {
+    if (find_variable(s) == NULL) {
         char * out = cat(s, " undeclared!", "", "", "");
         yyerror(out);
     }
@@ -912,11 +908,11 @@ void check_variable(const char* var_name) {
 void vars_routine(record  * r) {
     for (int i = 0; i < r->num_vars_used; ++i) {
         int is_declar = r->vars[i]->kind_of_use == 0;
-        char * key = cat(get_stack()->scope_name, ",", r->vars[i]->name, "", "");
         if (is_declar) {
-            insert_ht(key, r->vars[i]->type);
+            add_variable(r->vars[i]->name, r->vars[i]->type, r->vars[i]->initial_value);
         } else {
-            undeclared_error(key);
+            undeclared_error(r->vars[i]->name);
         }
+        /* printf("%s tem agr: %d vars\n", get_stack()->scope_name, get_stack()->var_count); */
     }
 }
